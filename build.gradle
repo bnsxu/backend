@@ -1,0 +1,79 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.9'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // MongoDB
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    // OAuth2.0
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    // devtools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // H2
+    runtimeOnly 'com.h2database:h2'
+    // MySQL
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+    // 유효성 검사 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // swagger
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    // ModelMapper 라이브러리
+    implementation 'org.modelmapper:modelmapper:3.1.1'
+    // ⭐ Spring boot 3.x이상에서 QueryDsl 패키지를 정의하는 방법
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    implementation 'com.querydsl:querydsl-apt'
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('bootBuildImage') {
+    builder = 'paketobuildpacks/builder-jammy-base:latest'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+clean {
+    delete file('src/main/generated')
+}
+

@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    group:
+      local:
+        - jwt
+        - oauth2
+        - local
+        - s3
+        - local
+        - mail
+      prod:
+        - prod
+    active: local
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
