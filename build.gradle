@@ -32,6 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     // Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    // rest api를 사용할 수 있게함
     implementation 'org.springframework.boot:spring-boot-starter-web'
     // Actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
