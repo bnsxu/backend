@@ -3,9 +3,11 @@ package com.example.meettify.service.member;
 import com.example.meettify.config.jwt.JwtProvider;
 import com.example.meettify.dto.jwt.TokenDTO;
 import com.example.meettify.dto.member.MemberServiceDTO;
+import com.example.meettify.dto.member.MemberUpdateServiceDTO;
 import com.example.meettify.dto.member.ResponseMemberDTO;
 import com.example.meettify.dto.member.role.UserRole;
 import com.example.meettify.entity.jwt.TokenEntity;
+import com.example.meettify.entity.member.AddressEntity;
 import com.example.meettify.entity.member.MemberEntity;
 import com.example.meettify.exception.member.MemberException;
 import com.example.meettify.repository.jwt.TokenRepository;
@@ -16,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,5 +108,32 @@ public class MemberServiceImpl implements MemberService {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + memberRole.name()));
         return authorities;
+    }
+
+    // 회원 수정
+    @Override
+    public ResponseMemberDTO update(MemberUpdateServiceDTO updateServiceDTO,
+                                    String email) {
+        try {
+            boolean isEmail = memberRepository.existsByMemberEmail(email);
+            String encodePw = null;
+            MemberEntity findMember;
+
+            if (isEmail) {
+                findMember = memberRepository.findByMemberEmail(email);
+                if (updateServiceDTO.getMemberPw() != null) {
+                    encodePw = passwordEncoder.encode(updateServiceDTO.getMemberPw());
+                }
+
+                findMember.updateMember(updateServiceDTO, encodePw);
+                MemberEntity update = memberRepository.save(findMember);
+                ResponseMemberDTO response = modelMapper.map(update, ResponseMemberDTO.class);
+                log.info("response : {}", response);
+                return response;
+            }
+            throw new EntityNotFoundException("회원이 존재하지 않습니다.");
+        } catch (Exception e) {
+            throw new MemberException(e.getMessage());
+        }
     }
 }
