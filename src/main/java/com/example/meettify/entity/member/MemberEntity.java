@@ -1,6 +1,8 @@
 package com.example.meettify.entity.member;
 
 import com.example.meettify.config.auditing.entity.BaseEntity;
+import com.example.meettify.dto.member.MemberUpdateServiceDTO;
+import com.example.meettify.dto.member.UpdateMemberDTO;
 import com.example.meettify.dto.member.role.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,4 +42,18 @@ public class MemberEntity extends BaseEntity {
 
     @Embedded
     private AddressEntity address;
+
+    public void updateMember(MemberUpdateServiceDTO updateMemberDTO, String password) {
+        this.memberPw = updateMemberDTO.getMemberPw() == null ? this.memberPw : updateMemberDTO.getMemberPw();
+        this.nickName = updateMemberDTO.getNickName() == null ? this.nickName : updateMemberDTO.getNickName();
+
+        // 기존 주소 엔티티를 직접 수정
+        if (updateMemberDTO.getMemberAddr() != null) {
+            this.address = AddressEntity.builder()
+                    .memberAddr(updateMemberDTO.getMemberAddr().getMemberAddr())
+                    .memberAddrDetail(updateMemberDTO.getMemberAddr().getMemberAddrDetail())
+                    .memberZipCode(updateMemberDTO.getMemberAddr().getMemberZipCode())
+                    .build();
+        }
+    }
 }

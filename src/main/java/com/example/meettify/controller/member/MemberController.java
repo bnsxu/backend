@@ -1,10 +1,7 @@
 package com.example.meettify.controller.member;
 
 import com.example.meettify.dto.jwt.TokenDTO;
-import com.example.meettify.dto.member.LoginDTO;
-import com.example.meettify.dto.member.MemberServiceDTO;
-import com.example.meettify.dto.member.RequestMemberDTO;
-import com.example.meettify.dto.member.ResponseMemberDTO;
+import com.example.meettify.dto.member.*;
 import com.example.meettify.entity.member.MemberEntity;
 import com.example.meettify.service.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.token.TokenService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -82,6 +82,24 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-    
+
+    // 회원 수정
+    @PutMapping("/{memberId}")
+    @Tag(name = "member")
+    @Operation(summary = "수정 API", description = "유저 정보 수정 API")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> update(@PathVariable Long memberId,
+                                    @Validated @RequestBody UpdateMemberDTO updateMemberDTO,
+                                    @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String email = userDetails.getUsername();
+            log.info("email : " + email);
+            MemberUpdateServiceDTO memberUpdateServiceDTO = MemberUpdateServiceDTO.makeServiceDTO(updateMemberDTO);
+            ResponseMemberDTO reponse = memberService.update(memberUpdateServiceDTO, email);
+            return ResponseEntity.ok().body(reponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 
 }
