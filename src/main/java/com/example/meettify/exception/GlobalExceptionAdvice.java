@@ -1,5 +1,17 @@
 package com.example.meettify.exception;
 
+import com.example.meettify.exception.board.BoardException;
+import com.example.meettify.exception.cart.CartException;
+import com.example.meettify.exception.comment.CommentException;
+import com.example.meettify.exception.externalService.ExternalServiceException;
+import com.example.meettify.exception.file.FileDownloadException;
+import com.example.meettify.exception.file.FileUploadException;
+import com.example.meettify.exception.item.ItemException;
+import com.example.meettify.exception.member.MemberException;
+import com.example.meettify.exception.order.OrderException;
+import com.example.meettify.exception.sessionExpire.SessionExpiredException;
+import com.example.meettify.exception.stock.OutOfStockException;
+import com.example.meettify.exception.validation.DataValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
