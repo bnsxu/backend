@@ -18,10 +18,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /*
- *   writer : 유요한
- *   work :
- *          전역으로 발생한 예외를 처리해줄 수 있는 Class를 생성
- *   date : 2023/10/12
+ *   worker : 유요한
+ *   work   : 전역으로 발생한 예외를 처리해줄 수 있는 Class를 생성
+ *   date   : 2024/09/19
  * */
 @RestControllerAdvice
 public class GlobalExceptionAdvice {

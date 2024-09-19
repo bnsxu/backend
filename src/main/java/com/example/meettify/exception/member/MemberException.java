@@ -1,6 +1,10 @@
 package com.example.meettify.exception.member;
 
-// 유저 관련 에러 메시지
+/*
+ *   worker : 유요한
+ *   work   : 유저 예외 처리
+ *   date   : 2024/09/19
+ * */
 public class MemberException extends RuntimeException{
     public MemberException(String msg) {
         super(msg);
