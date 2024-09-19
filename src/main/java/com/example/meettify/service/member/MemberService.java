@@ -1,5 +1,6 @@
 package com.example.meettify.service.member;
 
+import com.example.meettify.dto.jwt.TokenDTO;
 import com.example.meettify.dto.member.MemberServiceDTO;
 import com.example.meettify.dto.member.RequestMemberDTO;
 import com.example.meettify.dto.member.ResponseMemberDTO;
@@ -12,4 +13,6 @@ public interface MemberService {
     boolean emailCheck(String email);
     // 닉네임 중복 체크
     boolean nickNameCheck(String nickName);
+    // 로그인
+    TokenDTO login(String email, String password);
 }
