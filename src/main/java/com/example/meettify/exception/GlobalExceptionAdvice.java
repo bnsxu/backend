@@ -1,15 +1,26 @@
 package com.example.meettify.exception;
 
+import com.example.meettify.exception.board.BoardException;
+import com.example.meettify.exception.cart.CartException;
+import com.example.meettify.exception.comment.CommentException;
+import com.example.meettify.exception.externalService.ExternalServiceException;
+import com.example.meettify.exception.file.FileDownloadException;
+import com.example.meettify.exception.file.FileUploadException;
+import com.example.meettify.exception.item.ItemException;
+import com.example.meettify.exception.member.MemberException;
+import com.example.meettify.exception.order.OrderException;
+import com.example.meettify.exception.sessionExpire.SessionExpiredException;
+import com.example.meettify.exception.stock.OutOfStockException;
+import com.example.meettify.exception.validation.DataValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /*
- *   writer : 유요한
- *   work :
- *          전역으로 발생한 예외를 처리해줄 수 있는 Class를 생성
- *   date : 2023/10/12
+ *   worker : 유요한
+ *   work   : 전역으로 발생한 예외를 처리해줄 수 있는 Class를 생성
+ *   date   : 2024/09/19
  * */
 @RestControllerAdvice
 public class GlobalExceptionAdvice {

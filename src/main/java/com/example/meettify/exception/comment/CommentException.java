@@ -1,9 +1,8 @@
 package com.example.meettify.exception.comment;
 /*
- *   writer : 유요한
- *   work :
- *          댓글 예외처리 때 사용
- *   date : 2024/01/18
+ *   worker : 유요한
+ *   work   : 댓글 예외처리
+ *   date   : 2024/09/19
  * */
 public class CommentException extends RuntimeException{
 
