@@ -136,4 +136,21 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(e.getMessage());
         }
     }
+
+    // 회원 삭제
+    @Override
+    public String removeUser(Long memberId, String email) {
+        try {
+            MemberEntity findMember = memberRepository.findByMemberEmail(email);
+
+            // 회원이 비어있지 않고 넘어온 Id가 DB에 등록된 id가 일치할 때
+            if(findMember.getMemberId().equals(memberId)) {
+                memberRepository.deleteById(memberId);
+                return "회원 탈퇴 완료";
+            }
+            throw new MemberException("회원 id가 일치하지 않습니다.");
+        } catch (EntityNotFoundException e) {
+            throw new MemberException(e.getMessage());
+        }
+    }
 }

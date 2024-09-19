@@ -102,4 +102,21 @@ public class MemberController {
         }
     }
 
+    // 회원 탈퇴
+    @DeleteMapping("/{memberId}")
+    @Tag(name = "member")
+    @Operation(summary = "탈퇴 API", description = "회원 탈퇴 API")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> delete(@PathVariable Long memberId,
+                                    @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String email = userDetails.getUsername();
+            log.info("email : " + email);
+            String response = memberService.removeUser(memberId, email);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }

@@ -19,4 +19,6 @@ public interface MemberService {
     TokenDTO login(String email, String password);
     // 수정
     ResponseMemberDTO update(MemberUpdateServiceDTO updateServiceDTO, String email);
+    // 회원삭제
+    String removeUser(Long memberId, String email);
 }
