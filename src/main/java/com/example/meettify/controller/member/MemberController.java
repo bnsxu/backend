@@ -1,5 +1,7 @@
 package com.example.meettify.controller.member;
 
+import com.example.meettify.dto.jwt.TokenDTO;
+import com.example.meettify.dto.member.LoginDTO;
 import com.example.meettify.dto.member.MemberServiceDTO;
 import com.example.meettify.dto.member.RequestMemberDTO;
 import com.example.meettify.dto.member.ResponseMemberDTO;
@@ -51,7 +53,7 @@ public class MemberController {
     // 중복체크
     @GetMapping("/email/{memberEmail}")
     @Tag(name = "member")
-    @Operation(summary = "중복체크 API", description = "userEmail이 중복인지 체크하는 API입니다.")
+    @Operation(summary = "중복체크 API", description = "userEmail이 중복인지 체크하는 API")
     public boolean emailCheck(@PathVariable String memberEmail) {
         log.info("email : " + memberEmail);
         return memberService.emailCheck(memberEmail);
@@ -60,10 +62,26 @@ public class MemberController {
     // 닉네임 조회
     @GetMapping("/nickName/{nickName}")
     @Tag(name = "member")
-    @Operation(summary = "닉네임 조회", description = "중복된 닉네임이 있는지 확인하는 API입니다.")
+    @Operation(summary = "닉네임 조회", description = "중복된 닉네임이 있는지 확인하는 API")
     public boolean nickNameCheck(@PathVariable String nickName) {
         log.info("nickName : " + nickName);
         return memberService.nickNameCheck(nickName);
     }
+
+    // 로그인
+    @PostMapping("/login")
+    @Tag(name = "member")
+    @Operation(summary = "로그인 API", description = "로그인하면 JWT 발급하는 API")
+    public ResponseEntity<?> login(@RequestBody LoginDTO login) {
+        try {
+            String email = login.getEmail();
+            String memberPw = login.getMemberPw();
+            TokenDTO response = memberService.login(email, memberPw);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    
 
 }
