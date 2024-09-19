@@ -1,0 +1,131 @@
+services:
+  api-server:
+    # 현재 디렉터리에서 Dockerfile을 사용하여 이미지를 빌드합니다.
+    build: .
+    # 호스트의 8080 포트를 컨테이너의 8080 포트와 매핑합니다.
+    ports:
+      - 8080:8080
+    # 이 서비스가 시작되기 전에 cache-server, mysql, mongodb, oauth2-proxy
+    # 서비스가 먼저 시작되어야 함을 지정합니다.
+    depends_on:
+      cache-server:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      oauth2-proxy:
+        condition: service_healthy
+    # .env 파일에서 환경 변수를 로드합니다.
+    env_file:
+      - .env
+    # SPRING_PROFILES_ACTIVE=prod 환경 변수를 설정합니다.
+    # Docker 컨테이너 내부에서 환경 변수를 설정합니다.
+    # 이 환경 변수들은 컨테이너가 실행될 때 애플리케이션에서 사용할 수 있습니다.
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    # app-network 네트워크에 연결됩니다.
+    networks:
+      - app-network
+
+  cache-server:
+    # Redis 이미지를 사용하여 컨테이너를 생성합니다.
+    image: redis
+    # 호스트의 6379 포트를 컨테이너의 6379 포트와 매핑합니다.
+    ports:
+      - 6379:6379
+    # Redis가 정상적으로 작동하는지 확인하기 위한 건강 검사를 수행합니다.
+    healthcheck:
+      # redis-cli ping 명령어를 실행하여 Redis의 응답을 확인합니다.
+      test: [ "CMD", "redis-cli", "ping" ]
+      # 5초마다 검사
+      interval: 5s
+      # 10번 실패할 때까지 검사를 계속
+      retries: 10
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.runCommand('ping').ok"]
+      interval: 10s
+      retries: 5
+    networks:
+      - app-network
+
+  prometheus:
+    # Prometheus 이미지를 사용하여 컨테이너를 생성합니다.
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    # 컬의 prometheus.yml 파일을
+    # 컨테이너의 /etc/prometheus/prometheus.yml로 매핑하여 설정 파일을 제공합니다.
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - app-network
+
+  grafana:
+    # Grafana 이미지를 사용하여 컨테이너를 생성합니다.
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    # Grafana는 Prometheus가 시작된 후에 시작되어야 합니다.
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
+
+  k6:
+    # k6 이미지를 사용하여 컨테이너를 생성합니다.
+    image: loadimpact/k6
+    # 컨테이너 시작 시 k6 run /scripts/load-test.js 명령어를 실행합니다.
+    entrypoint: ["k6", "run", "/scripts/load-test.js"]
+    # 로컬의 scripts 디렉터리를 컨테이너의 /scripts 디렉터리로 매핑합니다.
+    volumes:
+      - ./scripts:/scripts
+    networks:
+      - app-network
+
+  oauth2-proxy:
+    # OAuth2 Proxy 이미지를 사용하여 컨테이너를 생성합니다.
+    image: oauth2-proxy/oauth2-proxy
+    ports:
+      - 4180:4180
+    # OAuth2 Proxy의 환경 변수를 설정합니다.
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      OAUTH2_CLIENT_ID: ${OAUTH2_CLIENT_ID}
+      OAUTH2_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET}
+      SPRING_DATASOURCE_URL: ${RDS_URL}
+      SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
