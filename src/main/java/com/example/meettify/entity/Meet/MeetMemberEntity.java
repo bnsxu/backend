@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Builder
 public class MeetMemberEntity extends BaseEntity {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "meetMember_id")
     private Long meetMemberId;
 

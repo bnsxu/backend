@@ -19,8 +19,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class MeetBoardEntity extends BaseEntity {
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "meetBoard_id")
     private Long meetBoardId;
 

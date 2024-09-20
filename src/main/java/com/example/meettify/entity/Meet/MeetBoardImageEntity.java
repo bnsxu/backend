@@ -16,8 +16,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class MeetBoardImageEntity extends BaseEntity {
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="meetBoardImage_id")
     private Long meetBoardImagesId;
 
