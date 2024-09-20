@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
+          distribution: 'temurin' # 배포판을 지정, 예: temurin, zulu 등
 
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
