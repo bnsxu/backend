@@ -20,7 +20,11 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin' # 배포판을 지정, 예: temurin, zulu 등
+
+      - name: Install Docker  # Docker 및 Docker Compose 설치 추가
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io docker-compose
 
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
@@ -33,9 +37,6 @@ jobs:
             ${{ runner.os }}-gradle
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Set up Docker Compose
         uses: docker/setup-buildx-action@v2
 
       - name: Build and start services
