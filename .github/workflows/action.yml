@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
+          distribution: 'temurin'  # Specify the JDK distribution (temurin, zulu, etc.)
 
       - name: Install Docker  # Docker 및 Docker Compose 설치 추가
         run: |
