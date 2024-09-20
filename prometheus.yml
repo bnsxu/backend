@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s # 스크랩 주기
+
+scrape_configs:
+  - job_name: 'api' # 모니터링할 서비스 이름
+    static_configs:
+      - targets: ['backend-api:8080'] # 모니터링할 서비스의 주소와 포트
