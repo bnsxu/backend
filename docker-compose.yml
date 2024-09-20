@@ -1,0 +1,94 @@
+services:
+  builder:
+    image: azul/zulu-openjdk:17
+    volumes:
+      - .:/opt/build
+      - type: volume
+        source: app_home
+        target: /opt/app
+        volume:
+          nocopy: true
+      - type: volume
+        source: gradle_home
+        target: /opt/.gradle:rw
+    working_dir: /opt/build
+    command: "/opt/build/gradlew copyDeps --gradle-user-home=/opt/.gradle -x test"
+
+  redis:
+    image: redis:6.2.6
+    ports:
+      - "6379:6379"
+    restart: always
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${rds_mysql_secret}
+      MYSQL_DATABASE: meettify
+      MYSQL_USER: ${rds_mysql_name}
+      MYSQL_PASSWORD: ${rds_mysql_secret}
+    ports:
+      - "3307:3306" #  호스트의 3307 포트를 컨테이너의 3306 포트로 매핑
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    restart: always
+
+  grafana:
+    image: grafana/grafana:8.2.2
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    restart: always
+
+  k6:
+    image: grafana/k6:0.35.0
+    platform: linux/amd64
+    volumes:
+      - ./test:/test
+    command: ["run", "/test/script.js"]
+    restart: always
+
+  api:
+    build:
+      context: ./
+      dockerfile: docker/api/Dockerfile
+    volumes:
+      - app_home:/opt/app
+    environment:
+      - SPRING_DATASOURCE_URL=${rds_mysql_url}
+      - SPRING_DATASOURCE_USERNAME=${rds_mysql_name}
+      - SPRING_DATASOURCE_PASSWORD=${rds_mysql_secret}
+      - SPRING_REDIS_HOST=redis
+      - JWT_SECRET=${jwt_secret}
+      - GOOGLE_CLIENT=${google_client}
+      - GOOGLE_SECRET=${google_secret}
+      - GOOGLE_URI=${google_uri}
+      - NAVER_CLIENT=${naver_client}
+      - NAVER_SECRET=${naver_secret}
+      - S3_ACCESS=${s3_access}
+      - S3_SECRET=${s3_secret}
+      - S3_BUCKET=${s3_bucket}
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "8080:8080"
+    restart: always
+
+volumes:
+  mysql_data:
+  grafana_data:
+  gradle_home:
+  app_home:
