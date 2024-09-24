@@ -42,3 +42,14 @@ jobs:
             docker-compose down       # 기존 컨테이너 중지
             docker-compose pull       # 새로운 이미지 가져오기
             docker-compose up -d      # 서비스 재시작
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t your-dockerhub-username/your-app-name:latest .
+          docker push your-dockerhub-username/your-app-name:latest
+
