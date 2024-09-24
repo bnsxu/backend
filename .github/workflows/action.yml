@@ -45,7 +45,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}  # EC2 퍼블릭 IP 또는 도메인
           username: ubuntu  # ubuntu는 그대로임
-          key: ${{ secrets.SSH_PRIVATE_KEY }}  # GitHub Secrets에 저장된 SSH 키
+          key: ${{ secrets.SSH_PRIVATE_KEY }}  # GitHub Secrets에 저장된 PEM 키
           port: 22
           script: |
             cd /path/to/your/project  # EC2 인스턴스의 프로젝트 디렉토리로 이동
