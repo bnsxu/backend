@@ -48,7 +48,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}  # GitHub Secrets에 저장된 PEM 키
           port: 22
           script: |
-            cd /path/to/your/project  # EC2 인스턴스의 프로젝트 디렉토리로 이동
+            cd ~/meettify  # EC2 인스턴스의 프로젝트 디렉토리로 이동
             docker-compose down       # 기존 컨테이너 중지
             docker-compose pull       # 새로운 이미지 가져오기
             docker-compose up -d      # 서비스 재시작
