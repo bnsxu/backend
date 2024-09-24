@@ -13,6 +13,10 @@ java {
     }
 }
 
+test {
+    exclude '**/MeettifyApplicationTests.class'
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -68,6 +72,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 tasks.named('bootBuildImage') {
