@@ -1,5 +1,6 @@
 name: CI/CD Pipeline
 
+# push와 PR날라가면 동작한다.
 on:
   push:
     branches:
