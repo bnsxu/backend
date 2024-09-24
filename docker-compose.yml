@@ -66,6 +66,7 @@ services:
       dockerfile: docker/api/Dockerfile
     volumes:
       - app_home:/opt/app
+    # 환경설정
     environment:
       - SPRING_DATASOURCE_URL=${rds_mysql_url}
       - SPRING_DATASOURCE_USERNAME=${rds_mysql_name}
