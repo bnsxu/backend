@@ -54,20 +54,21 @@ public class JwtProvider {
         Date now = new Date(System.currentTimeMillis());
         Date accessTokenExpire = new Date(now.getTime() + this.accessTokenTime);
         String accessToken = Jwts.builder()
-                .claims(claims)
-                .subject(email)
-                .issuedAt(now)
-                .expiration(accessTokenExpire)
-                .signWith(key)
+                .setIssuedAt(now)
+                .setClaims(claims)
+                // 내용 exp : 토큰 만료 시간, 시간은 NumericDate 형식(예: 1480849143370)으로 하며
+                // 항상 현재 시간 이후로 설정합니다.
+                .setExpiration(accessTokenExpire)
+                // 서명 : 비밀값과 함께 해시값을 ES256 방식으로 암호화
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         Date refreshTokenExpire = new Date(now.getTime() + this.refreshTokenTime);
         String refreshToken = Jwts.builder()
-                .claims(claims)
-                .subject(email)
-                .issuedAt(now)
-                .expiration(refreshTokenExpire)
-                .signWith(key)
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(refreshTokenExpire)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         TokenDTO responseToken = TokenDTO.builder()
@@ -106,7 +107,7 @@ public class JwtProvider {
     // 토큰 복호화
     private Claims parseClaims(String token) {
         try {
-            return Jwts.parser()
+            return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
@@ -120,7 +121,7 @@ public class JwtProvider {
     // 토큰 검증을 위한 메서드
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
+            Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);

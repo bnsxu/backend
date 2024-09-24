@@ -10,7 +10,7 @@ spring:
         - mail
       prod:
         - prod
-    active: local
+    active: prod
   devtools:
     livereload:
       enabled: true
