@@ -32,6 +32,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle
 
+      - name: Build the project
+        run: ./gradlew clean build  # JAR 파일 생성
+
       - name: Install Docker Compose
         run: |
           sudo apt-get update
@@ -44,11 +47,7 @@ jobs:
 
       - name: Wait for services to be healthy
         run: |
-          docker-compose -f docker-compose.yml ps
           sleep 20
-
-      - name: Run Gradle Build
-        run: ./gradlew clean build
 
       - name: Run tests
         run: |
@@ -57,10 +56,6 @@ jobs:
       - name: Clean up
         run: |
           docker-compose -f docker-compose.yml down
-
-      - name: Access Secrets
-        run: |
-          echo "Secrets: ${{ secrets.SECRET }}"
 
       - name: Deploy to EC2
         env:
