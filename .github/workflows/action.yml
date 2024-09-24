@@ -20,7 +20,12 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: 'temurin'  # Specify the JDK distribution (temurin, zulu, etc.)
+
+      - name: Install Docker  # Docker 및 Docker Compose 설치 추가
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io docker-compose
 
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
@@ -32,38 +37,36 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle
 
-      - name: Build the project
-        run: ./gradlew clean build  # JAR 파일 생성
-
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Build and start services
         run: |
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml up -d
 
+      - name: Install Docker
+        run: |
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sh get-docker.sh
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
       - name: Wait for services to be healthy
         run: |
+          docker-compose -f docker-compose.yml ps
           sleep 20
+
+      - name: Run Gradle Build
+        run: ./gradlew clean build
 
       - name: Run tests
         run: |
-          docker-compose -f docker-compose.yml run --rm api ./run-tests.sh
+          docker-compose -f docker-compose.yml run --rm api-server ./run-tests.sh
 
       - name: Clean up
         run: |
           docker-compose -f docker-compose.yml down
-
-      - name: Deploy to EC2
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USER }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > id_rsa
-          chmod 600 id_rsa
-          scp -o StrictHostKeyChecking=no -i id_rsa -o UserKnownHostsFile=/dev/null docker-compose.yml $EC2_USER@$EC2_HOST:~/app/
-          ssh -o StrictHostKeyChecking=no -i id_rsa -o UserKnownHostsFile=/dev/null $EC2_USER@$EC2_HOST "cd ~/app && docker-compose up -d --build"
