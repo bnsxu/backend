@@ -50,6 +50,6 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t your-dockerhub-username/your-app-name:latest .
-          docker push your-dockerhub-username/your-app-name:latest
+          docker build -t zxzz7608/backend:latest .
+          docker push zxzz7608/backend:latest
 
