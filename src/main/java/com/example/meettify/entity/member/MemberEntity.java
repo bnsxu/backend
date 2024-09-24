@@ -43,6 +43,9 @@ public class MemberEntity extends BaseEntity {
     @Embedded
     private AddressEntity address;
 
+    private String provider;
+    private String providerId;
+
     public void updateMember(MemberUpdateServiceDTO updateMemberDTO, String password) {
         this.memberPw = updateMemberDTO.getMemberPw() == null ? this.memberPw : updateMemberDTO.getMemberPw();
         this.nickName = updateMemberDTO.getNickName() == null ? this.nickName : updateMemberDTO.getNickName();
