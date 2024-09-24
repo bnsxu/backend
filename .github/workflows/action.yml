@@ -37,8 +37,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Set up Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get remove -y containerd.io containerd
+          sudo apt-get install -y containerd.io
+
 
       - name: Build and start services
         run: |
