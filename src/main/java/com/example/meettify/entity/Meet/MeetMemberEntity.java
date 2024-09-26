@@ -1,11 +1,11 @@
 package com.example.meettify.entity.Meet;
 
 import com.example.meettify.config.auditing.entity.BaseEntity;
+import com.example.meettify.dto.meet.MeetRole;
 import com.example.meettify.entity.member.MemberEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 
 /*

@@ -24,6 +24,13 @@ public class MeetBoardImageEntity extends BaseEntity {
     @JoinColumn(name = "meetBoard_id")
     private MeetBoardEntity meetBoardEntity;
 
-    @Column(name="images")
-    private String images;
+    @Column(name="meetBoardImage_oriFileName")
+    String oriFileName;
+    @Column(name="meetBoardImage_uploadFileName")
+    String uploadFileName;
+    @Column(name="meetBoardImage_uploadFilePath")
+    String uploadFilePath;
+    @Column(name="meetBoardImage_uploadFileUrl")
+    String uploadFileUrl;
+
 }
