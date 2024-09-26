@@ -3,6 +3,9 @@ services:
   builder:
     image: azul/zulu-openjdk:17
     working_dir: /home/ubuntu
+    volumes:
+      - .:/home/ubuntu
+    command: ["./gradlew", "build"]
 
   redis:
     image: redis:6.2.6
