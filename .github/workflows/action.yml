@@ -63,6 +63,6 @@ jobs:
           script: |
             cd /home/ubuntu
             docker-compose down
-            docker-compose pull      # 새로운 이미지 가져오기
-            docker-compose up -d      # 서비스 재시작
+            docker-compose pull
+            docker-compose up -d
           debug: true
