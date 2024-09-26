@@ -26,16 +26,12 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.30.3
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     restart: always
 
   grafana:
     image: grafana/grafana:8.2.2
-    volumes:
-      - grafana_data:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
@@ -46,8 +42,6 @@ services:
   k6:
     image: grafana/k6:0.35.0
     platform: linux/amd64
-    volumes:
-      - ./test:/test
     command: ["run", "/test/script.js"]
     restart: always
 
@@ -55,8 +49,6 @@ services:
     build:
       context: ./
       dockerfile: docker/api/Dockerfile
-    volumes:
-      - app_home:/opt/app
     env_file:
       - .env  # 환경 변수를 .env 파일에서 불러오기
     environment:
