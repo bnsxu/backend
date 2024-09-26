@@ -67,6 +67,8 @@ jobs:
             docker-compose down       # 기존 컨테이너 중지
             docker-compose pull       # 새로운 이미지 가져오기
             docker-compose up -d      # 서비스 재시작
+          debug: true
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
