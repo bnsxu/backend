@@ -7,9 +7,9 @@ spring:
       max-request-size: 5MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${rds_mysql_url}
-    username: ${rds_mysql_name}
-    password: ${rds_mysql_secret}
+    url: ${RDS_MYSQL_URL}
+    username: ${RDS_MYSQL_NAME}
+    password: ${RDS_MYSQL_SECRET}
   session:
     store-type: redis
 
@@ -46,17 +46,17 @@ spring:
       client:
         registration:
           google:
-            client-id: ${google_client}
-            client-secret: ${google_secret}
-            redirect-uri: ${google_uri}/login/oauth2/code/google
+            client-id: ${GOOGLE_CLIENT}
+            client-secret: ${GOOGLE_SECRET}
+            redirect-uri: ${GOOGLE_URI}/login/oauth2/code/google
             scope:
               - email
               - profile
 
           # naver
           naver:
-            client-id: ${naver_client}
-            client-secret: ${naver_secret}
+            client-id: ${NAVER_CLIENT}
+            client-secret: ${NAVER_SECRET}
             client-name: Naver
             redirect-uri: http://localhost:8080/login/oauth2/code/naver
             authorization-grant-type: authorization_code
@@ -74,7 +74,7 @@ spring:
       matching-strategy: ant_path_matcher
 
 jwt:
-  secret_key: ${jwt_secret}
+  secret_key: ${JWT_SECRET}
   access:
     expiration: 3600000000
   refresh:
@@ -83,10 +83,10 @@ jwt:
 cloud:
   aws:
     credentials:
-      access-key: ${s3_access}
-      secret-key: ${s3_secret}
+      access-key: ${S3_ACCESS}
+      secret-key: ${S3_SECRET}
     s3:
-      bucket: ${s3_bucket}
+      bucket: ${S3_BUCKET}
     region:
       # 버킷 생성시 선택한 AWS 리전
       static: ap-northeast-2
