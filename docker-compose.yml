@@ -1,20 +1,4 @@
-version: '3.8'
 services:
-  builder:
-    image: azul/zulu-openjdk:17
-    volumes:
-      - .:/opt/build
-      - type: volume
-        source: app_home
-        target: /opt/app
-        volume:
-          nocopy: true
-      - type: volume
-        source: gradle_home
-        target: /opt/.gradle:rw
-    working_dir: /opt/build
-    command: "/opt/build/gradlew copyDeps --gradle-user-home=/opt/.gradle -x test"
-
   redis:
     image: redis:6.2.6
     ports:
@@ -29,23 +13,19 @@ services:
       MYSQL_USER: ${rds_mysql_name}
       MYSQL_PASSWORD: ${rds_mysql_secret}
     ports:
-      - "3307:3306" # 호스트의 3307 포트를 컨테이너의 3306 포트로 매핑
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     restart: always
 
   prometheus:
     image: prom/prometheus:v2.30.3
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     restart: always
 
   grafana:
     image: grafana/grafana:8.2.2
-    volumes:
-      - grafana_data:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
@@ -56,21 +36,15 @@ services:
   k6:
     image: grafana/k6:0.35.0
     platform: linux/amd64
-    volumes:
-      - ./test:/test
     command: ["run", "/test/script.js"]
     restart: always
 
   api:
-    build:
-      context: ./
-      dockerfile: docker/api/Dockerfile
-    volumes:
-      - app_home:/opt/app
+    image: zxzz7608/meettify:latest    # GitHub Actions에서 빌드한 이미지 사용
     env_file:
-      - .env  # 환경 변수를 .env 파일에서 불러오기
+      - .env
     environment:
-      - SPRING_PROFILES_ACTIVE=prod  # 배포 환경에서 사용할 프로파일 추가
+      - SPRING_PROFILES_ACTIVE=prod
     depends_on:
       - mysql
       - redis
