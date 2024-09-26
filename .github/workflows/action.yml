@@ -67,6 +67,12 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            cd /home/ubuntu  # docker-compose.yml 파일이 위치한 디렉토리로 이동
+            if ! command -v docker-compose &> /dev/null; then
+              echo "docker-compose is not installed. Installing..."
+              sudo apt-get update
+              sudo apt-get install -y docker-compose
+            fi
             docker-compose down
             docker-compose pull
             docker-compose up -d
