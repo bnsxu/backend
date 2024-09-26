@@ -2,20 +2,15 @@
 FROM gradle:7.0-jdk17 AS builder
 WORKDIR /app
 
-# Gradle Wrapper를 포함하여 필요한 파일만 복사
-COPY ../gradlew ./
-COPY ../gradle ./gradle/
-COPY ../build.gradle ./
-COPY ../settings.gradle ./
-COPY ../src ./src/
-
 # Gradle Wrapper를 사용하여 빌드
 RUN chmod +x gradlew && ./gradlew build --no-daemon
 
 # Base image for running the application
 FROM openjdk:17-jdk-slim
 
-ARG JAR_FILE=build/libs/*.jar
+ARG JAR_FILE=build/libs/meettify-0.0.1-SNAPSHOT.jar
+
+EXPOSE 8080
 
 # 빌드된 JAR 파일을 컨테이너로 복사
 COPY ${JAR_FILE} app.jar

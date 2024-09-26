@@ -39,12 +39,19 @@ services:
     command: ["run", "/test/script.js"]
     restart: always
 
-  api:
-    image: zxzz7608/meettify:latest
+api:
+  build:
+    context: .
+    dockerfile: docker/api/Dockerfile
+    image: zxzz8014/meettify:latest
     env_file:
       - .env
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - OAUTH2_CLIENT_ID=${OAUTH2_CLIENT_ID}
+      - OAUTH2_CLIENT_SECRET=${OAUTH2_CLIENT_SECRET}
     depends_on:
       - mysql
       - redis
