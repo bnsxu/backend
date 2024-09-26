@@ -2,9 +2,11 @@
 FROM gradle:7.0-jdk17 AS builder
 WORKDIR /app
 COPY . .
-RUN ./gradlew build
 
-# Base image
+# Gradle Wrapper를 사용하여 빌드
+RUN ./gradlew build --no-daemon
+
+# Base image for running the application
 FROM openjdk:17-jdk-slim
 
 ARG JAR_FILE=build/libs/*.jar
@@ -13,5 +15,4 @@ ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
 
 # 컨테이너 시작 시 실행할 명령어 지정
-# prod를 application-prod.yml을 사용하려고 한다.
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
