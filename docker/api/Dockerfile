@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 
 # Gradle Wrapper를 사용하여 빌드
-RUN ./gradlew build --no-daemon
+RUN chmod +x gradlew && ./gradlew build --no-daemon
 
 # Base image for running the application
 FROM openjdk:17-jdk-slim
