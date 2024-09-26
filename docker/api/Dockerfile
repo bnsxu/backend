@@ -16,4 +16,3 @@ COPY ${JAR_FILE} app.jar
 
 # 컨테이너 시작 시 실행할 명령어 지정
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
-docker build -t meettify -f /docker/api/Dockerfile . 이거로 도커 파일을 빌드해준다.
