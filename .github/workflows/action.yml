@@ -50,8 +50,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t zxzz7608/meettify:latest .
-          docker push zxzz7608/meettify:latest
+          docker build -t zxzz8014/meettify:latest .
+          docker push zxzz8014/meettify:latest
 
       - name: SSH to EC2 and deploy
         uses: appleboy/ssh-action@master
