@@ -3,7 +3,6 @@ services:
   builder:
     image: azul/zulu-openjdk:17
     working_dir: /home/ubuntu
-    command: "/opt/build/gradlew copyDeps --gradle-user-home=/opt/.gradle -x test"
 
   redis:
     image: redis:6.2.6
