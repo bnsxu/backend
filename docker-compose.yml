@@ -8,7 +8,7 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ${RDS_MYSQL_URL}
+      MYSQL_ROOT_PASSWORD: ${RDS_MYSQL_SECRET}
       MYSQL_DATABASE: meettify
       MYSQL_USER: ${RDS_MYSQL_NAME}
       MYSQL_PASSWORD: ${RDS_MYSQL_SECRET}
@@ -39,10 +39,10 @@ services:
     command: ["run", "/test/script.js"]
     restart: always
 
-api:
-  build:
-    context: .
-    dockerfile: docker/api/Dockerfile
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
     image: zxzz8014/meettify:latest
     env_file:
       - .env
