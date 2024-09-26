@@ -86,4 +86,7 @@ public class S3ImageUploadService {
         String ext = oriFileName.substring(oriFileName.lastIndexOf(".") + 1);
         return UUID.randomUUID().toString() + "." + ext;
     }
+
+
+
 }
