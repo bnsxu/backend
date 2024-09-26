@@ -8,10 +8,10 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ${rds_mysql_secret}
+      MYSQL_ROOT_PASSWORD: ${RDS_MYSQL_URL}
       MYSQL_DATABASE: meettify
-      MYSQL_USER: ${rds_mysql_name}
-      MYSQL_PASSWORD: ${rds_mysql_secret}
+      MYSQL_USER: ${RDS_MYSQL_NAME}
+      MYSQL_PASSWORD: ${RDS_MYSQL_SECRET}
     ports:
       - "3307:3306"
     volumes:
@@ -48,16 +48,29 @@ api:
       - .env
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - OAUTH2_CLIENT_ID=${OAUTH2_CLIENT_ID}
-      - OAUTH2_CLIENT_SECRET=${OAUTH2_CLIENT_SECRET}
+      - AWS_ACCESS_KEY_ID=${S3_ACCESS}
+      - AWS_SECRET_ACCESS_KEY=${S3_SECRET}
+      - OAUTH2_CLIENT_ID=${GOOGLE_CLIENT}
+      - OAUTH2_CLIENT_SECRET=${GOOGLE_SECRET}
+      - OAUTH2_NAVER_CLIENT_ID=${NAVER_CLIENT}
+      - OAUTH2_NAVER_CLIENT_SECRET=${NAVER_SECRET}
+      - RDS_MYSQL_URL=${RDS_MYSQL_URL}
+      - RDS_MYSQL_NAME=${RDS_MYSQL_NAME}
+      - RDS_MYSQL_SECRET=${RDS_MYSQL_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=localhost
+      - REDIS_PORT=6379
     depends_on:
       - mysql
       - redis
     ports:
       - "8080:8080"
     restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      retries: 5
+      timeout: 5s
 
 volumes:
   mysql_data:
