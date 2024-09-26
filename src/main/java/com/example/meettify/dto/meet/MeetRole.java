@@ -1,4 +1,4 @@
-package com.example.meettify.entity.Meet;
+package com.example.meettify.dto.meet;
 
 
 /*
