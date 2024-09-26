@@ -1,7 +1,13 @@
 # Base image for building the application
 FROM gradle:7.0-jdk17 AS builder
 WORKDIR /app
-COPY . .
+
+# Gradle Wrapper를 포함하여 필요한 파일만 복사
+COPY ../gradlew ./
+COPY ../gradle ./gradle/
+COPY ../build.gradle ./
+COPY ../settings.gradle ./
+COPY ../src ./src/
 
 # Gradle Wrapper를 사용하여 빌드
 RUN chmod +x gradlew && ./gradlew build --no-daemon
