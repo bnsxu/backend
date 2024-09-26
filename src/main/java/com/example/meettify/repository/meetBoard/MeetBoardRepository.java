@@ -16,6 +16,6 @@ public interface MeetBoardRepository extends JpaRepository<MeetBoardEntity, Long
 
     //누가 작성했는지 까지 알아야한다.
     @Query("SELECT mb FROM meetBoards mb JOIN FETCH mb.memberEntity WHERE mb.meetEntity = :meetId")
-    Optional<MeetBoardEntity> findMeetBoardEntitiesBy(@Param("meetBoardId") Long meetId);
+    Optional<MeetBoardEntity> findMeetBoardEntitiesBy(@Param("meetId") Long meetId);
 
 }
