@@ -40,7 +40,7 @@ services:
     restart: always
 
   api:
-    image: zxzz7608/meettify:latest    # GitHub Actions에서 빌드한 이미지 사용
+    image: zxzz7608/meettify:latest
     env_file:
       - .env
     environment:
