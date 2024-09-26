@@ -1,12 +1,11 @@
 # Base image
 FROM openjdk:17-jdk-slim
 
-# 작업 디렉토리 설정
-WORKDIR /app
+ARG JAR_FILE=build/libs/*.jar
 
 # 빌드된 JAR 파일을 컨테이너로 복사
-COPY build/libs/*.jar app.jar
-ENV SPRING_PROFILES_ACTIVE=prod
+COPY ${JAR_FILE} app.jar
 
 # 컨테이너 시작 시 실행할 명령어 지정
+# prod를 application-prod.yml을 사용하려고 한다.
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
