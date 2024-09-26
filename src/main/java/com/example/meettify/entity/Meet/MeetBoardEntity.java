@@ -1,6 +1,7 @@
 package com.example.meettify.entity.Meet;
 
 import com.example.meettify.config.auditing.entity.BaseEntity;
+import com.example.meettify.entity.member.MemberEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,10 +33,19 @@ public class MeetBoardEntity extends BaseEntity {
     @OneToMany(mappedBy = "meetBoardEntity", fetch = FetchType.LAZY)
     private List<MeetBoardImageEntity> meetBoardImages;
 
+    @JoinColumn(name = "member_id")
+    @ManyToOne( fetch = FetchType.LAZY)
+    private MemberEntity memberEntity;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="meet_id")
     private MeetEntity meetEntity;
 
     @Column(name="meetBoard_postDate")
     private LocalDateTime postDate;
+
+    @PrePersist
+    public void prePersist() {
+        this.postDate = (this.postDate == null) ? LocalDateTime.now() : this.postDate;
+    }
 }

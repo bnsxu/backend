@@ -1,9 +1,7 @@
 package com.example.meettify.dto.meet;
 
-
 import com.example.meettify.dto.meet.category.Category;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class ResponseMeetDTO {
+public class MeetDetailDTO {
     private Long meetId;
     private String meetName;
     private String meetDescription;
@@ -20,4 +18,5 @@ public class ResponseMeetDTO {
     private String meetLocation;
     private List<String> images;
     private Category category;
+
 }
