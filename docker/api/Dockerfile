@@ -1,3 +1,9 @@
+# Base image for building the application
+FROM gradle:7.0-jdk17 AS builder
+WORKDIR /app
+COPY . .
+RUN ./gradlew build
+
 # Base image
 FROM openjdk:17-jdk-slim
 
