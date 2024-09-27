@@ -31,7 +31,6 @@ jobs:
           ./gradlew wrapper
           ./gradlew clean build
 
-
       - name: Install Docker
         run: |
           if ! command -v docker &> /dev/null; then
@@ -54,20 +53,13 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       # 프로젝트 빌드 그리고 이미지처리
-      - name: Build and push Docker image with Jib
-        run: ./gradlew jib --image=${{ secrets.DOCKERHUB_REPOSITORY }}/meettify:latest
-        env:
-          DOCKERHUB_REPOSITORY: ${{ secrets.DOCKERHUB_REPOSITORY }}
-          RDS_MYSQL_SECRET: ${{ secrets.RDS_MYSQL_SECRET }}
-          RDS_MYSQL_NAME: ${{ secrets.RDS_MYSQL_NAME }}
-          RDS_MYSQL_URL: ${{ secrets.RDS_MYSQL_URL }}
-          S3_ACCESS: ${{ secrets.S3_ACCESS }}
-          S3_SECRET: ${{ secrets.S3_SECRET }}
-          GOOGLE_CLIENT: ${{ secrets.GOOGLE_CLIENT }}
-          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
-          NAVER_CLIENT: ${{ secrets.NAVER_CLIENT }}
-          NAVER_SECRET: ${{ secrets.NAVER_SECRET }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/api/Dockerfile
+          push: true
+          tags: ${{secrets.DOCKERHUB_REPOSITORY}}/meettify:latest
 
       # ec2 연결
       - name: SSH to EC2 and deploy
@@ -78,19 +70,13 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd /home/ubuntu
-            sudo docker-compose down
-            sudo docker-compose pull
-            sudo docker-compose up -d
-            # 환경 변수를 직접 설정하여 실행
-            export AWS_ACCESS_KEY_ID=${{ secrets.S3_ACCESS }}
-            export AWS_SECRET_ACCESS_KEY=${{ secrets.S3_SECRET }}
-            export OAUTH2_CLIENT_ID=${{ secrets.GOOGLE_CLIENT }}
-            export OAUTH2_CLIENT_SECRET=${{ secrets.GOOGLE_SECRET }}
-            export OAUTH2_NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT }}
-            export OAUTH2_NAVER_CLIENT_SECRET=${{ secrets.NAVER_SECRET }}
-            export RDS_MYSQL_URL=${{ secrets.RDS_MYSQL_URL }}
-            export RDS_MYSQL_NAME=${{ secrets.RDS_MYSQL_NAME }}
-            export RDS_MYSQL_SECRET=${{ secrets.RDS_MYSQL_SECRET }}
-            export JWT_SECRET=${{ secrets.JWT_SECRET }}
+            cd /home/ubuntu  # docker-compose.yml 파일이 위치한 디렉토리로 이동
+            if ! command -v docker-compose &> /dev/null; then
+              echo "docker-compose is not installed. Installing..."
+              sudo apt-get update
+              sudo apt-get install -y docker-compose
+            fi
+            docker-compose down
+            docker-compose pull
             docker-compose up -d
+          debug: true

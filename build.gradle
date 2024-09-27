@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.9'
     id 'io.spring.dependency-management' version '1.1.6'
-    id 'com.google.cloud.tools.jib' version '3.2.1' // Jib 플러그인 추가
 }
 
 group = 'com.example'
@@ -28,19 +27,6 @@ repositories {
     mavenCentral()
 }
 
-// Jib 설정 추가
-jib {
-    from {
-        image = "openjdk:17-jdk-slim" // 기본 이미지 설정
-    }
-    to {
-        image = "zxzz8014/meettify" // 환경변수 사용
-        tags = ["latest"] // 태그 설정
-    }
-    container {
-        jvmFlags = ['-Dspring.profiles.active=prod', '-XX:+UseContainerSupport']
-    }
-}
 
 dependencies {
     // JPA

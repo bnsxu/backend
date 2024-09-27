@@ -40,7 +40,10 @@ services:
     restart: always
 
   api:
-    image: zxzz8014/meettify:latest # Jib으로 빌드한 이미지를 사용
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    image: zxzz8014/meettify:latest
     env_file:
       - .env
     environment:
