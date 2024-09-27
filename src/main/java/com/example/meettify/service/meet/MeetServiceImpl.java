@@ -7,8 +7,10 @@ import com.example.meettify.dto.meetBoard.MeetBoardSummaryDTO;
 import com.example.meettify.entity.meet.MeetEntity;
 import com.example.meettify.entity.meet.MeetImageEntity;
 import com.example.meettify.entity.meet.MeetMemberEntity;
+import com.example.meettify.entity.meetBoard.MeetBoardEntity;
 import com.example.meettify.entity.member.MemberEntity;
 import com.example.meettify.exception.meet.MeetException;
+import com.example.meettify.exception.meetBoard.MeetBoardException;
 import com.example.meettify.repository.meet.MeetImageRepository;
 import com.example.meettify.repository.meet.MeetMemberRepository;
 import com.example.meettify.repository.meet.MeetRepository;
@@ -19,6 +21,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -218,7 +222,29 @@ public class MeetServiceImpl implements MeetService {
 
     @Override
     public List<MeetBoardSummaryDTO>  getMeetSummaryList(Long meetId) {
-        return null;
+        try {
+            Pageable pageable = PageRequest.of(0, 3);  // 첫 번째 페이지에서 3개의 결과만 가져옴
+            List<MeetBoardEntity> recentMeetBoards = meetBoardRepository.findTop3MeetBoardEntitiesByMeetId(meetId, pageable);
+
+            // 게시글이 없을 경우
+            if (recentMeetBoards.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            return recentMeetBoards.stream().map(board -> MeetBoardSummaryDTO.builder()
+                    .meetBoardId(board.getMeetBoardId())
+                    .title(board.getMeetBoardTitle())
+                    .postDate(board.getPostDate())
+                    .nickName(board.getMemberEntity().getNickName())
+                    .build()).toList();
+        }catch (DataAccessException dae) {
+            throw new MeetBoardException("데이터베이스 접근 중 오류가 발생했습니다.");
+        } catch (NullPointerException npe) {
+            throw new MeetBoardException("필요한 데이터가 누락되었습니다.");
+        } catch (Exception e) {
+            throw new MeetBoardException("알 수 없는 오류가 발생했습니다.");
+        }
+
     }
 
 }
