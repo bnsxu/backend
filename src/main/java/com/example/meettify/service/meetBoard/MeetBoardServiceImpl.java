@@ -1,8 +1,9 @@
 package com.example.meettify.service.meetBoard;
 
 import com.example.meettify.dto.meetBoard.MeetBoardDetailsResponseDTO;
-import com.example.meettify.entity.Meet.MeetBoardEntity;
-import com.example.meettify.entity.Meet.MeetBoardImageEntity;
+import com.example.meettify.entity.meetBoard.MeetBoardEntity;
+import com.example.meettify.entity.meetBoard.MeetBoardImageEntity;
+import com.example.meettify.exception.meetBoard.MeetBoardException;
 import com.example.meettify.repository.meetBoard.MeetBoardImageRepository;
 import com.example.meettify.repository.meetBoard.MeetBoardRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,9 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.print.attribute.standard.Destination;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -39,12 +37,9 @@ public class MeetBoardServiceImpl implements MeetBoardService {
                             .map(MeetBoardImageEntity::getUploadFileUrl)  // MeetBoardImageEntity 에 이미지 URL 추출
                             .collect(Collectors.toList())  // List<String>으로 변환
             );
-
-
+            return meetBoardDetailsResponseDTO;
         } catch (Exception e){
-
+            throw new MeetBoardException(e.getMessage());
         }
-
-        return null;
     }
 }

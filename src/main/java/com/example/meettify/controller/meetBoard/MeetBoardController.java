@@ -1,4 +1,4 @@
-package com.example.meettify.controller.MeetBoard;
+package com.example.meettify.controller.meetBoard;
 
 import com.example.meettify.dto.meetBoard.MeetBoardDetailsResponseDTO;
 import com.example.meettify.service.meetBoard.MeetBoardService;

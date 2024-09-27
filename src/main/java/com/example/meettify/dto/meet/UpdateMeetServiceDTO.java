@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Builder
-public class MeetUpdateServiceDTO {
+public class UpdateMeetServiceDTO {
     private Long meetId;
     private String meetName;
     private String meetDescription;
@@ -25,8 +25,8 @@ public class MeetUpdateServiceDTO {
     private List<String> existingImageUrls; // 기존 이미지 URL 리스트 추가
     private Category category;
 
-    public static MeetUpdateServiceDTO makeServiceDTO(UpdateMeetDTO meet) {
-        return MeetUpdateServiceDTO.builder()
+    public static UpdateMeetServiceDTO makeServiceDTO(UpdateMeetDTO meet) {
+        return UpdateMeetServiceDTO.builder()
                 .meetId(meet.getMeetId())
                 .meetName(meet.getMeetName())
                 .meetDescription(meet.getMeetDescription())

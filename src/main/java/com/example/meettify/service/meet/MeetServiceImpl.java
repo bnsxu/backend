@@ -4,9 +4,9 @@ import com.example.meettify.config.s3.S3ImageUploadService;
 import com.example.meettify.dto.meet.*;
 import com.example.meettify.dto.meet.category.Category;
 import com.example.meettify.dto.meetBoard.MeetBoardSummaryDTO;
-import com.example.meettify.entity.Meet.MeetEntity;
-import com.example.meettify.entity.Meet.MeetImageEntity;
-import com.example.meettify.entity.Meet.MeetMemberEntity;
+import com.example.meettify.entity.meet.MeetEntity;
+import com.example.meettify.entity.meet.MeetImageEntity;
+import com.example.meettify.entity.meet.MeetMemberEntity;
 import com.example.meettify.entity.member.MemberEntity;
 import com.example.meettify.exception.meet.MeetException;
 import com.example.meettify.repository.meet.MeetImageRepository;
@@ -124,13 +124,13 @@ public class MeetServiceImpl implements MeetService {
 
     @Override
     @Transactional
-    public ResponseMeetDTO update(MeetUpdateServiceDTO meetUpdateServiceDTO, List<MultipartFile> newImages) throws IOException {
+    public ResponseMeetDTO update(UpdateMeetServiceDTO updateMeetServiceDTO, List<MultipartFile> newImages) throws IOException {
         // 1. 변경 요청한 모임이 존재하는지 확인
-        MeetEntity findMeet = meetRepository.findById(meetUpdateServiceDTO.getMeetId())
+        MeetEntity findMeet = meetRepository.findById(updateMeetServiceDTO.getMeetId())
                 .orElseThrow(() -> new MeetException("변경 대상 엔티티가 존재하지 않습니다."));
 
         // 2. 업데이트할 모임 정보 적용
-        findMeet.updateMeet(meetUpdateServiceDTO);
+        findMeet.updateMeet(updateMeetServiceDTO);
 
         // 추후에 s3삭제 기능 구현 예정
         // ...
