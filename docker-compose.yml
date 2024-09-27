@@ -40,7 +40,7 @@ services:
     restart: always
 
   api:
-    image: ${DOCKERHUB_REPOSITORY}/meettify:latest # Jib으로 빌드한 이미지를 사용
+    image: zxzz8014/meettify:latest # Jib으로 빌드한 이미지를 사용
     env_file:
       - .env
     environment:
