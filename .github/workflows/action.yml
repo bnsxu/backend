@@ -30,17 +30,7 @@ jobs:
           chmod +x ./gradlew
           ./gradlew wrapper
           ./gradlew clean build
-        env:
-          RDS_MYSQL_SECRET: ${{ secrets.RDS_MYSQL_SECRET }}
-          RDS_MYSQL_NAME: ${{ secrets.RDS_MYSQL_NAME }}
-          RDS_MYSQL_URL: ${{ secrets.RDS_MYSQL_URL }}
-          S3_ACCESS: ${{ secrets.S3_ACCESS }}
-          S3_SECRET: ${{ secrets.S3_SECRET }}
-          GOOGLE_CLIENT: ${{ secrets.GOOGLE_CLIENT }}
-          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
-          NAVER_CLIENT: ${{ secrets.NAVER_CLIENT }}
-          NAVER_SECRET: ${{ secrets.NAVER_SECRET }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
 
       - name: Install Docker
         run: |
@@ -64,13 +54,21 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       # 프로젝트 빌드 그리고 이미지처리
-      - name: Build and push Docker image
+      - name: Build and push Docker image with Jib
         uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: docker/api/Dockerfile
-          push: true
-          tags: ${{secrets.DOCKERHUB_REPOSITORY}}/meettify:latest
+        run: ./gradlew jib --image=${{ secrets.DOCKERHUB_REPOSITORY }}/meettify:latest
+        env:
+          DOCKERHUB_REPOSITORY: ${{ secrets.DOCKERHUB_REPOSITORY }}
+          RDS_MYSQL_SECRET: ${{ secrets.RDS_MYSQL_SECRET }}
+          RDS_MYSQL_NAME: ${{ secrets.RDS_MYSQL_NAME }}
+          RDS_MYSQL_URL: ${{ secrets.RDS_MYSQL_URL }}
+          S3_ACCESS: ${{ secrets.S3_ACCESS }}
+          S3_SECRET: ${{ secrets.S3_SECRET }}
+          GOOGLE_CLIENT: ${{ secrets.GOOGLE_CLIENT }}
+          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+          NAVER_CLIENT: ${{ secrets.NAVER_CLIENT }}
+          NAVER_SECRET: ${{ secrets.NAVER_SECRET }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
       # ec2 연결
       - name: SSH to EC2 and deploy
