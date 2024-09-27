@@ -55,7 +55,6 @@ jobs:
 
       # 프로젝트 빌드 그리고 이미지처리
       - name: Build and push Docker image with Jib
-        uses: docker/build-push-action@v2
         run: ./gradlew jib --image=${{ secrets.DOCKERHUB_REPOSITORY }}/meettify:latest
         env:
           DOCKERHUB_REPOSITORY: ${{ secrets.DOCKERHUB_REPOSITORY }}
