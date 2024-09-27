@@ -150,9 +150,9 @@ public class MeetController {
             boolean hasPermission = meetService.checkEditPermission(meetId, email);
             if (hasPermission) {
                 // ServiceDTODTO 바꾸는 로직
-                MeetUpdateServiceDTO meetUpdateServiceDTO = MeetUpdateServiceDTO.makeServiceDTO(updateMeetDTO);
+                UpdateMeetServiceDTO updateMeetServiceDTO = UpdateMeetServiceDTO.makeServiceDTO(updateMeetDTO);
                 // 응답ServiceDTO 받기
-                ResponseMeetDTO response = meetService.update(meetUpdateServiceDTO, updateMeetDTO.getNewImages());
+                ResponseMeetDTO response = meetService.update(updateMeetServiceDTO, updateMeetDTO.getNewImages());
                 //반환하기
                 return ResponseEntity.ok().body(response);
             }

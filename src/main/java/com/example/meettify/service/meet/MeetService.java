@@ -21,7 +21,7 @@ public interface MeetService {
     //모임 제거
     String removeMeet(Long meetId, String email);
     boolean checkEditPermission(Long meetId,String email);
-    ResponseMeetDTO update(MeetUpdateServiceDTO meetUpdateServiceDTO, List<MultipartFile> newImages);
+    ResponseMeetDTO update(UpdateMeetServiceDTO meetUpdateServiceDTO, List<MultipartFile> newImages);
     boolean isAlreadyMember(Long meetId, String email);
     void applyToJoinMeet(Long meetId, String email);
 

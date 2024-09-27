@@ -1,6 +1,7 @@
-package com.example.meettify.entity.Meet;
+package com.example.meettify.entity.meetBoard;
 
 import com.example.meettify.config.auditing.entity.BaseEntity;
+import com.example.meettify.entity.meet.MeetEntity;
 import com.example.meettify.entity.member.MemberEntity;
 import jakarta.persistence.*;
 import lombok.*;

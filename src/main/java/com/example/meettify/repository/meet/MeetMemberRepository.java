@@ -1,7 +1,7 @@
 package com.example.meettify.repository.meet;
 
-import com.example.meettify.entity.Meet.MeetMemberEntity;
-import com.example.meettify.entity.Meet.MeetEntity;
+import com.example.meettify.entity.meet.MeetMemberEntity;
+import com.example.meettify.entity.meet.MeetEntity;
 import com.example.meettify.entity.member.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
