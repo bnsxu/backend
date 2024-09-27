@@ -79,9 +79,9 @@ jobs:
           port: 22
           script: |
             cd /home/ubuntu
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d
+            sudo docker-compose down
+            sudo docker-compose pull
+            sudo docker-compose up -d
             # 환경 변수를 직접 설정하여 실행
             export AWS_ACCESS_KEY_ID=${{ secrets.S3_ACCESS }}
             export AWS_SECRET_ACCESS_KEY=${{ secrets.S3_SECRET }}
