@@ -1,4 +1,4 @@
-package com.example.meettify.entity.Meet;
+package com.example.meettify.entity.meet;
 
 import com.example.meettify.config.auditing.entity.BaseEntity;
 import com.example.meettify.dto.meet.MeetRole;

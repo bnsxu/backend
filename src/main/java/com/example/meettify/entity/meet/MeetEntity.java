@@ -1,12 +1,11 @@
-package com.example.meettify.entity.Meet;
+package com.example.meettify.entity.meet;
 
 
 import com.example.meettify.config.auditing.entity.BaseEntity;
-import com.example.meettify.dto.meet.MeetUpdateServiceDTO;
+import com.example.meettify.dto.meet.UpdateMeetServiceDTO;
 import com.example.meettify.dto.meet.category.Category;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -39,17 +38,17 @@ public class MeetEntity extends BaseEntity {
     private String meetLocation;
 
     @OneToMany(mappedBy = "meetEntity", fetch = FetchType.LAZY)
-    private List<MeetImageEntity> meetImages;
+    private List<com.example.meettify.entity.meet.MeetImageEntity> meetImages;
 
     @Column(name = "meet_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private Category meetCategory;
 
     @OneToMany(mappedBy = "meetEntity", fetch = FetchType.LAZY)
-    private List<MeetBoardEntity> MeetBoardEntity;
+    private List<com.example.meettify.entity.meetBoard.MeetBoardEntity> MeetBoardEntity;
 
 
-    public void updateMeet(MeetUpdateServiceDTO updateMeetDTO) {
+    public void updateMeet(UpdateMeetServiceDTO updateMeetDTO) {
         // 변경 요구사항을 가지고 해당 메소드 실행
         this.meetName = updateMeetDTO.getMeetName() == null ? this.meetName : updateMeetDTO.getMeetName();
         this.meetCategory = updateMeetDTO.getCategory() == null ? this.meetCategory : updateMeetDTO.getCategory();
