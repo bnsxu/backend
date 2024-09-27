@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class MeetBoardSummaryDTO {
-    private String meetBoardId;
+    private Long meetBoardId;
     private String title;
     private String nickName;
     private LocalDateTime postDate;
