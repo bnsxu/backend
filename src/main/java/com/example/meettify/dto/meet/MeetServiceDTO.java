@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /*
 *   worker  : 유요한
 *   work    : 서비스에 데이터를 보내주는 용도의 클래스
@@ -28,7 +30,7 @@ public class MeetServiceDTO {
     private String meetDescription;
     private Long meetMaximum;
     private String meetLocation;
-    private MultipartFile[] images;
+    private List<MultipartFile> images;
     private Category category;
 
     public static MeetServiceDTO makeServiceDTO(RequestMeetDTO request) {

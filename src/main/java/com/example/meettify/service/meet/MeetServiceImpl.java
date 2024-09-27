@@ -60,11 +60,11 @@ public class MeetServiceImpl implements MeetService {
         MeetEntity savedMeet = meetRepository.save(meetEntity);
 
         // 3. 이미지가 있는 경우, S3에 업로드하고 해당 URL을 MeetImageEntity로 저장
-        if (meet.getImages() != null && meet.getImages().length > 0) {
+        if (meet.getImages() != null && !meet.getImages().isEmpty()) {
             // S3에 이미지 업로드 및 DTO 생성 (FileDTOFactory 활용)
             List<MeetImageEntity> imageEntities = s3ImageUploadService.upload(
                     "meetImages",
-                    List.of(meet.getImages()),
+                    meet.getImages(),
                     (oriFileName, uploadFileName, uploadFilePath, uploadFileUrl) -> MeetImageEntity.builder()
                             .meetEntity(savedMeet)
                             .oriFileName(oriFileName)
