@@ -34,7 +34,7 @@ jib {
         image = "openjdk:17-jdk-slim" // 기본 이미지 설정
     }
     to {
-        image = System.getenv('DOCKERHUB_REPOSITORY') + "/meettify" // 환경변수 사용
+        image = "zxzz8014/meettify" // 환경변수 사용
         tags = ["latest"] // 태그 설정
     }
     container {
