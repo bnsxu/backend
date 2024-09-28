@@ -58,7 +58,7 @@ services:
       OAUTH2_CLIENT_SECRET: ${GOOGLE_SECRET}  # Google OAuth 비밀 키
       OAUTH2_NAVER_CLIENT_ID: ${NAVER_CLIENT}  # Naver OAuth 클라이언트 ID
       OAUTH2_NAVER_CLIENT_SECRET: ${NAVER_SECRET}  # Naver OAuth 비밀 키
-      RDS_MYSQL_URL: "jdbc:mysql://meettify-drs-db.crcsauuw2yfb.ap-northeast-2.rds.amazonaws.com:3306/meettify?useSSL=false&allowPublicKeyRetrieval=true"  # MySQL URL
+      RDS_MYSQL_URL: ${RDS_MYSQL_URL}  # MySQL URL
       RDS_MYSQL_NAME: ${RDS_MYSQL_NAME}  # MySQL 사용자 이름
       RDS_MYSQL_SECRET: ${RDS_MYSQL_SECRET}  # MySQL 비밀번호
       JWT_SECRET: ${JWT_SECRET}  # JWT 비밀 키
