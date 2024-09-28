@@ -1,5 +1,5 @@
 # Base image for building the application
-FROM gradle:7.0-jdk17 AS builder
+FROM gradle:8.0.2-jdk17 AS builder
 WORKDIR /app
 
 # Gradle Wrapper를 복사하고 실행 권한 부여
