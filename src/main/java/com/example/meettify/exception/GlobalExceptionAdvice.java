@@ -105,13 +105,4 @@ public class GlobalExceptionAdvice {
     public ResponseEntity<OutOfStockException> handleOutOfStockException(OutOfStockException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex);
     }
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class ErrorResponse {
-        private String message;
-        private int status;
-    }
-
 }
