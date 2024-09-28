@@ -76,6 +76,8 @@ jobs:
               sudo apt-get update
               sudo apt-get install -y docker-compose
             fi
+            # 기존 컨테이너 중지 및 제거
             docker-compose down
+            docker-compose rm -f  # 강제로 컨테이너 제거
             docker-compose pull
             docker-compose up -d
