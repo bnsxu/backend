@@ -14,29 +14,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-/*
-*   worker  : 유요한
-*   work    : 시큐리티 설정들을 넣고 빈으로 등록할 수 있는 클래스
-*   date    : 2024/09/19
-* */
 
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
-// 시큐리티에서 메서드 수준의 보안 설정을 활성화
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
     private final JwtProvider jwtProvider;
@@ -44,7 +42,6 @@ public class SecurityConfig {
     private final OAuth2FailHandler oAuth2FailHandler;
     private final PrincipalOAuthUserService principalOAuthUserService;
 
-    // 이렇게 처리하면 확작성과 유연성이 늘어난다.
     @Bean
     public PasswordEncoder passwordEncoder() {
         String idForEncode = "bcrypt";
@@ -56,85 +53,71 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 활성화
                 .csrf(csrf -> csrf.disable())  // Disable CSRF as you're using JWT
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())
-                .logout(logout -> logout.disable());
-
-        http
+                .logout(logout -> logout.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/members/")
-                        .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/members/{memberId}")
-                        .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/api/v1/members/.*")
-                        .permitAll()
+                        // API 권한 설정
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/members/").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/members/{memberId}").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/v1/members/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/notice/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/notice/{noticeId}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/notice/{noticeId}").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/notice/*").permitAll()
+                        .requestMatchers("/api/v1/items/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/items/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/items/{itemId}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/items/{itemId}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/cart/{cartId}").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/cart/").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/cart/{cartId}").hasAnyRole("USER", "ADMIN")
 
-                        .requestMatchers(HttpMethod.POST,"/api/v1/notice/")
-                        .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/notice/{noticeId}")
-                        .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/notice/{noticeId}")
-                        .hasRole("ADMIN")
-                        .requestMatchers("/api/v1/notice/*")
-                        .permitAll()
-
-                        .requestMatchers("/api/v1/items/*")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/items/")
-                        .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/items/{itemId}")
-                        .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/items/{itemId}")
-                        .hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.GET,"/api/v1/cart/{cartId}")
-                        .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/cart/")
-                        .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/cart/{cartId}")
-                        .hasAnyRole("USER", "ADMIN")
-
-                        .requestMatchers("/swagger-resources/.*")
-                        .permitAll()
-                        .requestMatchers("/swagger-ui/.*")
-                        .permitAll()
-                        .requestMatchers("/actuator/.*")
-                        .permitAll()
+                        // Swagger 리소스에 대한 접근 허용
+                        .requestMatchers("/swagger-resources/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/swagger-config").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/logistics").permitAll()
+                        .requestMatchers("/").permitAll()
                 );
-
 
         // JWT Configuration
         http.apply(new JwtSecurityConfig(jwtProvider));
 
-// Exception handling for authentication/authorization issues
-        http
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-                        .accessDeniedHandler(new JwtAccessDeniedHandler())
-                );
+        // Exception handling for authentication/authorization issues
+        http.exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                .accessDeniedHandler(new JwtAccessDeniedHandler())
+        );
 
-// OAuth2 Login configuration
-        http
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(principalOAuthUserService)
-                        )
-                        .successHandler(oAuth2SuccessHandler)
-                        .failureHandler(oAuth2FailHandler)
-                );
+        // OAuth2 Login configuration
+        http.oauth2Login(oauth2 -> oauth2
+                .userInfoEndpoint(userInfo -> userInfo.userService(principalOAuthUserService))
+                .successHandler(oAuth2SuccessHandler)
+                .failureHandler(oAuth2FailHandler)
+        );
 
-// Enable actuator access without authentication
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/**").permitAll()
-                );
-
+        // Enable actuator access without authentication
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/**").permitAll());
 
         return http.build();
     }
+
+    @Bean
+    public ForwardedHeaderFilter forwardedHeaderFilter() {
+        return new ForwardedHeaderFilter();
+    }
+
+    @Bean
+    public WebSecurityCustomizer securityCustomizer() {
+        return web -> web.ignoring()
+                .requestMatchers("/v3/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**");
+    }
+
 
 
     @Bean
@@ -150,5 +133,15 @@ public class SecurityConfig {
         return new JPAQueryFactory(entityManager);
     }
 
-
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트의 출처를 지정하세요.
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

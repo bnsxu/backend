@@ -97,21 +97,7 @@ public class PrincipalOAuthUserService implements OAuth2UserService<OAuth2UserRe
         if(isMember) {
             log.info("로그인을 이미 한적이 있습니다.");
         }
-        List<GrantedAuthority> authorities = getAuthorities(findMember);
-        TokenDTO token = jwtProvider.createToken(email, authorities, findMember.getMemberId());
-        TokenEntity findToken = tokenRepository.findByEmail(email);
 
-        // 토큰이 없다면 처음 가입이므로 생성해준다.
-        if(findToken == null) {
-            TokenEntity tokenEntity = modelMapper.map(token, TokenEntity.class);
-            tokenRepository.save(tokenEntity);
-        }
-
-        // 기존에 토근이 존재하면 업데이트
-        if(findToken != null) {
-            findToken.updateToken(token);
-            tokenRepository.save(findToken);
-        }
 
         // attributes가 있는 생성자를 사용하여 PrincipalDetails 객체 생성
         // 소셜 로그인인 경우에는 attributes도 함께 가지고 있는 PrincipalDetails 객체를 생성하게 됩니다.
@@ -120,10 +106,5 @@ public class PrincipalOAuthUserService implements OAuth2UserService<OAuth2UserRe
         return principalDetails;
     }
 
-    private List<GrantedAuthority> getAuthorities(MemberEntity member) {
-        UserRole memberRole = member.getMemberRole();
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + memberRole.name()));
-        return authorities;
-    }
+
 }

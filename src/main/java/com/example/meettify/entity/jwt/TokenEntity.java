@@ -26,7 +26,7 @@ public class TokenEntity {
         return TokenEntity.builder()
                 .grantType(token.getGrantType())
                 .refreshToken(token.getRefreshToken())
-                .email(token.getEmail())
+                .email(token.getMemberEmail())
                 .memberId(token.getMemberId())
                 .build();
     }

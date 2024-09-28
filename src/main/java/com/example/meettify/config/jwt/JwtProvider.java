@@ -75,7 +75,7 @@ public class JwtProvider {
                 .grantType("Bearer ")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .email(email)
+                .memberEmail(email)
                 .memberId(memberId)
                 .build();
         log.info("responseToken: {}", responseToken);
