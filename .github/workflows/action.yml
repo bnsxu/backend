@@ -102,10 +102,9 @@ jobs:
           port: 22
           script: |
             # 기존 컨테이너 중지 및 제거
-            docker-compose down
-            docker-compose rm -f
-
+            docker-compose down --remove-orphans
+  
             # 최신 이미지 가져와서 컨테이너 실행
-            docker-compose build
             docker-compose pull
-            docker-compose up -d
+            docker-compose up -d --build
+
