@@ -23,7 +23,7 @@ spring:
     hibernate:
       # 운영시에는 validate나 none으로 해야합니다.
       # 수정되면 안되기 때문입니다.
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
