@@ -2,77 +2,78 @@ services:
   redis:
     image: redis:6.2.6
     ports:
-      - "6379:6379"
+      - "6379:6379"  # 외부 포트
     restart: always
 
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ${RDS_MYSQL_SECRET}
-      MYSQL_DATABASE: meettify
-      MYSQL_USER: ${RDS_MYSQL_NAME}
-      MYSQL_PASSWORD: ${RDS_MYSQL_SECRET}
+      MYSQL_ROOT_PASSWORD: ${RDS_MYSQL_SECRET}  # 환경 변수를 사용하여 비밀번호 설정
+      MYSQL_DATABASE: meettify  # 기본 데이터베이스 생성
+      MYSQL_USER: ${RDS_MYSQL_NAME}  # 사용자 이름
+      MYSQL_PASSWORD: ${RDS_MYSQL_SECRET}  # 사용자 비밀번호
     ports:
-      - "3307:3306"
+      - "3307:3306"  # 외부 포트
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql  # 데이터 지속성을 위한 볼륨
     restart: always
 
   prometheus:
     image: prom/prometheus:v2.30.3
     ports:
-      - "9090:9090"
+      - "9090:9090"  # 외부 포트
     restart: always
 
   grafana:
     image: grafana/grafana:8.2.2
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin  # 기본 관리자 사용자 이름
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # 기본 관리자 비밀번호
     ports:
-      - "3000:3000"
+      - "3000:3000"  # 외부 포트
     restart: always
 
   k6:
     image: grafana/k6:0.35.0
     platform: linux/amd64
-    command: ["run", "/test/script.js"]
+    command: ["run", "/test/script.js"]  # 테스트 스크립트 경로
     restart: always
 
   api:
     build:
       context: .
-      dockerfile: docker/api/Dockerfile
+      dockerfile: docker/api/Dockerfile  # Dockerfile 경로
     image: zxzz8014/meettify:latest
     env_file:
-      - .env
+      - .env  # 환경 변수를 포함하는 파일
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - AWS_ACCESS_KEY_ID=${S3_ACCESS}
-      - AWS_SECRET_ACCESS_KEY=${S3_SECRET}
-      - OAUTH2_CLIENT_ID=${GOOGLE_CLIENT}
-      - OAUTH2_CLIENT_SECRET=${GOOGLE_SECRET}
-      - OAUTH2_NAVER_CLIENT_ID=${NAVER_CLIENT}
-      - OAUTH2_NAVER_CLIENT_SECRET=${NAVER_SECRET}
-      - RDS_MYSQL_URL=${RDS_MYSQL_URL}
-      - RDS_MYSQL_NAME=${RDS_MYSQL_NAME}
-      - RDS_MYSQL_SECRET=${RDS_MYSQL_SECRET}
-      - JWT_SECRET=${JWT_SECRET}
-      - REDIS_HOST=localhost
-      - REDIS_PORT=6379
+      SPRING_PROFILES_ACTIVE: prod  # 활성 Spring 프로파일 설정
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS}  # AWS 액세스 키
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET}  # AWS 비밀 키
+      OAUTH2_CLIENT_ID: ${GOOGLE_CLIENT}  # Google OAuth 클라이언트 ID
+      OAUTH2_CLIENT_SECRET: ${GOOGLE_SECRET}  # Google OAuth 비밀 키
+      OAUTH2_NAVER_CLIENT_ID: ${NAVER_CLIENT}  # Naver OAuth 클라이언트 ID
+      OAUTH2_NAVER_CLIENT_SECRET: ${NAVER_SECRET}  # Naver OAuth 비밀 키
+      RDS_MYSQL_URL: "jdbc:mysql://meettify-drs-db.crcsauuw2yfb.ap-northeast-2.rds.amazonaws.com:3306/meettify?useSSL=false&allowPublicKeyRetrieval=true"  # MySQL URL
+      RDS_MYSQL_NAME: ${RDS_MYSQL_NAME}  # MySQL 사용자 이름
+      RDS_MYSQL_SECRET: ${RDS_MYSQL_SECRET}  # MySQL 비밀번호
+      JWT_SECRET: ${JWT_SECRET}  # JWT 비밀 키
+      REDIS_HOST: redis  # Redis 서비스 이름으로 설정
+      REDIS_PORT: 6379  # Redis 포트
     depends_on:
-      - mysql
+      - mysql  # MySQL 서비스에 의존
+      - redis  # Redis 서비스에 의존
     ports:
-      - "8080:8080"
+      - "8080:8080"  # 외부 포트
     restart: always
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-      interval: 10s
-      retries: 5
-      timeout: 5s
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysql"]  # MySQL 서비스 상태 확인
+      interval: 10s  # 상태 확인 간격
+      retries: 5  # 실패 시 재시도 횟수
+      timeout: 5s  # 타임아웃 설정
 
 volumes:
-  mysql_data:
-  grafana_data:
-  gradle_home:
-  app_home:
+  mysql_data:  # MySQL 데이터 지속성을 위한 볼륨
+  grafana_data:  # Grafana 데이터 지속성을 위한 볼륨
+  gradle_home:  # Gradle 홈 디렉토리
+  app_home:  # 애플리케이션 홈 디렉토리
