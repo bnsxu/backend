@@ -122,5 +122,6 @@ jobs:
             docker-compose rm -f
 
             # 최신 이미지 가져와서 컨테이너 실행
+            docker-compose build
             docker-compose pull
             docker-compose up -d
