@@ -75,8 +75,6 @@ services:
       interval: 10s  # 상태 확인 간격
       retries: 5  # 실패 시 재시도 횟수
       timeout: 5s  # 타임아웃 설정
-    volumes:
-      - ./src/main/resources/application-prod.yml:/app/config/application-prod.yml  # 설정 파일 마운트
 
 volumes:
   mysql_data:  # MySQL 데이터 지속성을 위한 볼륨
