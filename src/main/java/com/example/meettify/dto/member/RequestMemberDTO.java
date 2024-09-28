@@ -1,11 +1,16 @@
 package com.example.meettify.dto.member;
 
-import com.example.meettify.dto.member.role.UserRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+
+/*
+*   worker  : 유요한
+*   work    : 회원가입시 프론트가 서버로 보내주는 request
+*   date    : 2024/09/27
+* */
 
 @Getter
 @ToString
@@ -28,10 +33,6 @@ public class RequestMemberDTO {
 
     @Schema(description = "회원 비밀번호")
     private String memberPw;
-
-    @Schema(description = "회원 권한")
-    @NotNull(message = "권한은 필수입니다.")
-    private UserRole memberRole;
 
     @Schema(description = "회원 주소")
     @NotNull(message = "주소는 필수입니다.")

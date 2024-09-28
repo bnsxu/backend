@@ -1,8 +1,8 @@
 package com.example.meettify.entity.member;
 
 import com.example.meettify.config.auditing.entity.BaseEntity;
-import com.example.meettify.dto.member.MemberUpdateServiceDTO;
-import com.example.meettify.dto.member.UpdateMemberDTO;
+import com.example.meettify.dto.member.MemberServiceDTO;
+import com.example.meettify.dto.member.UpdateMemberServiceDTO;
 import com.example.meettify.dto.member.role.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +10,7 @@ import lombok.*;
 /*
 *   worker  : 유요한
 *   work    : 유저에 관한 테이블을 생성해주는 엔티티 클래스
-*   date    : 2024/09/19
+*   date    : 2024/09/27
 * */
 
 @Entity(name = "members")
@@ -46,16 +46,31 @@ public class MemberEntity extends BaseEntity {
     private String provider;
     private String providerId;
 
-    public void updateMember(MemberUpdateServiceDTO updateMemberDTO, String password) {
-        this.memberPw = updateMemberDTO.getMemberPw() == null ? this.memberPw : updateMemberDTO.getMemberPw();
-        this.nickName = updateMemberDTO.getNickName() == null ? this.nickName : updateMemberDTO.getNickName();
+
+    public static MemberEntity createMember(MemberServiceDTO member, String encodePw) {
+        return MemberEntity.builder()
+                .memberName(member.getMemberName())
+                .memberEmail(member.getMemberEmail())
+                .memberPw(encodePw)
+                .nickName(member.getNickName())
+                .memberRole(UserRole.USER)
+                .address(AddressEntity.builder()
+                        .memberAddr(member.getMemberAddr().getMemberAddr())
+                        .memberAddrDetail(member.getMemberAddr().getMemberAddrDetail())
+                        .memberZipCode(member.getMemberAddr().getMemberZipCode())
+                        .build()).build();
+    }
+
+    public void updateMember(UpdateMemberServiceDTO member, String encodePw) {
+        this.memberPw = encodePw == null ? this.memberPw : encodePw;
+        this.nickName = member.getNickName() == null ? this.nickName : member.getNickName();
 
         // 기존 주소 엔티티를 직접 수정
-        if (updateMemberDTO.getMemberAddr() != null) {
+        if (member.getMemberAddr() != null) {
             this.address = AddressEntity.builder()
-                    .memberAddr(updateMemberDTO.getMemberAddr().getMemberAddr())
-                    .memberAddrDetail(updateMemberDTO.getMemberAddr().getMemberAddrDetail())
-                    .memberZipCode(updateMemberDTO.getMemberAddr().getMemberZipCode())
+                    .memberAddr(member.getMemberAddr().getMemberAddr())
+                    .memberAddrDetail(member.getMemberAddr().getMemberAddrDetail())
+                    .memberZipCode(member.getMemberAddr().getMemberZipCode())
                     .build();
         }
     }

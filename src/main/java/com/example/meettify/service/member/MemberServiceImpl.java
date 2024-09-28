@@ -3,11 +3,10 @@ package com.example.meettify.service.member;
 import com.example.meettify.config.jwt.JwtProvider;
 import com.example.meettify.dto.jwt.TokenDTO;
 import com.example.meettify.dto.member.MemberServiceDTO;
-import com.example.meettify.dto.member.MemberUpdateServiceDTO;
+import com.example.meettify.dto.member.UpdateMemberServiceDTO;
 import com.example.meettify.dto.member.ResponseMemberDTO;
 import com.example.meettify.dto.member.role.UserRole;
 import com.example.meettify.entity.jwt.TokenEntity;
-import com.example.meettify.entity.member.AddressEntity;
 import com.example.meettify.entity.member.MemberEntity;
 import com.example.meettify.exception.member.MemberException;
 import com.example.meettify.repository.jwt.TokenRepository;
@@ -18,7 +17,6 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,12 +46,12 @@ public class MemberServiceImpl implements MemberService {
     public ResponseMemberDTO signUp(MemberServiceDTO member) {
         try {
             String encodePw = passwordEncoder.encode(member.getMemberPw());
-            log.info("암호화 비밀번호 : " + encodePw);
 
-            MemberEntity memberEntity = modelMapper.map(member, MemberEntity.class);
+            MemberEntity memberEntity = MemberEntity.createMember(member, encodePw);
 
             MemberEntity saveMember = memberRepository.save(memberEntity);
-            ResponseMemberDTO response = modelMapper.map(saveMember, ResponseMemberDTO.class);
+            ResponseMemberDTO response = ResponseMemberDTO.changeDTO(saveMember);
+
             log.info("response : {}", response);
             return response;
         } catch (Exception e) {
@@ -78,28 +76,46 @@ public class MemberServiceImpl implements MemberService {
     public TokenDTO login(String email, String password) {
         try {
             boolean isMember = memberRepository.existsByMemberEmail(email);
-            TokenEntity findToken = null;
-            TokenDTO token = null;
+            TokenEntity tokenEntity;
+            TokenDTO token;
+
+            // 회원이 있으면 true
             if (isMember) {
-                MemberEntity findMember = memberRepository.findByMemberEmail(email);
+                MemberEntity findMember = findMemberEntity(email);
                 // DB에 넣어져 있는 비밀번호는 암호화가 되어 있어서 비교하는 기능을 사용해야 합니다.
                 // 사용자가 입력한 패스워드를 암호화하여 사용자 정보와 비교
                 if (passwordEncoder.matches(password, findMember.getMemberPw())) {
+                    // 토큰 조회
+                    tokenEntity = tokenRepository.findByEmail(email);
+
+                    // 토큰 생성을 위해 권한 주기
                     List<GrantedAuthority> authorities = getAuthorities(findMember);
                     token = jwtProvider.createToken(email, authorities, findMember.getMemberId());
-                    findToken = tokenRepository.findByEmail(email);
-                } else {
-                    findToken.updateToken(token);
+
+                    // 토큰이 있으면 업데이트
+                    if(tokenEntity != null) {
+                        tokenEntity.updateToken(token);
+                    }
+
+                    if(tokenEntity == null) {
+                        tokenEntity = TokenEntity.changeEntity(token);
+                    }
+
+                    TokenEntity saveToken = tokenRepository.save(tokenEntity);
+                    TokenDTO response = TokenDTO.changeDTO(saveToken, token.getAccessToken());
+                    log.info("response : {}", response);
+                    return response;
                 }
-                TokenEntity saveToken = tokenRepository.save(findToken);
-                TokenDTO response = modelMapper.map(saveToken, TokenDTO.class);
-                log.info("response : {}", response);
-                return response;
             }
-            throw new EntityNotFoundException("회원이 존재하지 않습니다.");
+            throw new EntityNotFoundException(String.format("회원이 존재하지 않습니다. 이메일: %s", email));
         } catch (Exception e) {
             throw new MemberException(e.getMessage());
         }
+    }
+
+    private MemberEntity findMemberEntity(String email) {
+        MemberEntity findMember = memberRepository.findByMemberEmail(email);
+        return findMember;
     }
 
     // 회원의 권한을 GrantedAuthority 타입으로 반환하는 메서드
@@ -112,7 +128,7 @@ public class MemberServiceImpl implements MemberService {
 
     // 회원 수정
     @Override
-    public ResponseMemberDTO update(MemberUpdateServiceDTO updateServiceDTO,
+    public ResponseMemberDTO update(UpdateMemberServiceDTO updateServiceDTO,
                                     String email) {
         try {
             boolean isEmail = memberRepository.existsByMemberEmail(email);
@@ -120,14 +136,17 @@ public class MemberServiceImpl implements MemberService {
             MemberEntity findMember;
 
             if (isEmail) {
-                findMember = memberRepository.findByMemberEmail(email);
+                // 유저 정보 가져오기
+                findMember = findMemberEntity(email);
+
+                // 비밀번호 변경이 오면 비밀번호 암호화
                 if (updateServiceDTO.getMemberPw() != null) {
                     encodePw = passwordEncoder.encode(updateServiceDTO.getMemberPw());
                 }
 
                 findMember.updateMember(updateServiceDTO, encodePw);
                 MemberEntity update = memberRepository.save(findMember);
-                ResponseMemberDTO response = modelMapper.map(update, ResponseMemberDTO.class);
+                ResponseMemberDTO response = ResponseMemberDTO.changeDTO(update);
                 log.info("response : {}", response);
                 return response;
             }
@@ -141,7 +160,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public String removeUser(Long memberId, String email) {
         try {
-            MemberEntity findMember = memberRepository.findByMemberEmail(email);
+            MemberEntity findMember = findMemberEntity(email);
 
             // 회원이 비어있지 않고 넘어온 Id가 DB에 등록된 id가 일치할 때
             if(findMember.getMemberId().equals(memberId)) {

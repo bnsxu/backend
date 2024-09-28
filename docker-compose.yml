@@ -9,6 +9,7 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${RDS_MYSQL_SECRET}
+      URL: ${RDS_MYSQL_URL}
       MYSQL_DATABASE: meettify
       MYSQL_USER: ${RDS_MYSQL_NAME}
       MYSQL_PASSWORD: ${RDS_MYSQL_SECRET}

@@ -2,11 +2,8 @@ package com.example.meettify.service.member;
 
 import com.example.meettify.dto.jwt.TokenDTO;
 import com.example.meettify.dto.member.MemberServiceDTO;
-import com.example.meettify.dto.member.MemberUpdateServiceDTO;
-import com.example.meettify.dto.member.RequestMemberDTO;
+import com.example.meettify.dto.member.UpdateMemberServiceDTO;
 import com.example.meettify.dto.member.ResponseMemberDTO;
-import com.example.meettify.entity.member.MemberEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 
 public interface MemberService {
     // 회원가입
@@ -18,7 +15,7 @@ public interface MemberService {
     // 로그인
     TokenDTO login(String email, String password);
     // 수정
-    ResponseMemberDTO update(MemberUpdateServiceDTO updateServiceDTO, String email);
+    ResponseMemberDTO update(UpdateMemberServiceDTO updateServiceDTO, String email);
     // 회원삭제
     String removeUser(Long memberId, String email);
 }

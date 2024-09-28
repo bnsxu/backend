@@ -2,6 +2,7 @@ package com.example.meettify.entity.meet;
 
 import com.example.meettify.config.auditing.entity.BaseEntity;
 import com.example.meettify.dto.meet.MeetRole;
+import com.example.meettify.entity.meet.MeetEntity;
 import com.example.meettify.entity.member.MemberEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,8 +22,7 @@ import java.time.LocalDateTime;
 @Builder
 public class MeetMemberEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "meetMember_id")
     private Long meetMemberId;
 

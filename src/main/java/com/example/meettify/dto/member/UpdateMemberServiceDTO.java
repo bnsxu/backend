@@ -1,6 +1,5 @@
 package com.example.meettify.dto.member;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
@@ -8,16 +7,16 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Builder
-public class MemberUpdateServiceDTO {
+public class UpdateMemberServiceDTO {
     private String nickName;
     private String memberPw;
     private AddressDTO memberAddr;
 
 
-    public static MemberUpdateServiceDTO makeServiceDTO(UpdateMemberDTO member) {
+    public static UpdateMemberServiceDTO makeServiceDTO(UpdateMemberDTO member) {
         AddressDTO address =
                 member.getMemberAddr() != null ? member.getMemberAddr() : new AddressDTO("", "", "");
-        return MemberUpdateServiceDTO.builder()
+        return UpdateMemberServiceDTO.builder()
                 .nickName(member.getNickName())
                 .memberPw(member.getMemberPw())
                 .memberAddr(member.getMemberAddr())
