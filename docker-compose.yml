@@ -75,6 +75,9 @@ services:
       interval: 10s  # 상태 확인 간격
       retries: 5  # 실패 시 재시도 횟수
       timeout: 5s  # 타임아웃 설정
+    volumes:
+      - ./src/main/resources/application-prod.yml:/app/config/application-prod.yml  # YAML 파일을 컨테이너와 연결
+    command: [["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]]
 
 volumes:
   mysql_data:  # MySQL 데이터 지속성을 위한 볼륨

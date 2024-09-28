@@ -7,6 +7,7 @@ COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
+# YAML 파일 복사
 COPY src/main/resources/application-prod.yml /app/config/
 
 # 소스 코드를 복사
