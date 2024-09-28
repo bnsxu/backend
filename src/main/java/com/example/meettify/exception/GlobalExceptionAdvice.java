@@ -12,6 +12,9 @@ import com.example.meettify.exception.order.OrderException;
 import com.example.meettify.exception.sessionExpire.SessionExpiredException;
 import com.example.meettify.exception.stock.OutOfStockException;
 import com.example.meettify.exception.validation.DataValidationException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -101,6 +104,14 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(OutOfStockException.class)
     public ResponseEntity<OutOfStockException> handleOutOfStockException(OutOfStockException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex);
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class ErrorResponse {
+        private String message;
+        private int status;
     }
 
 }

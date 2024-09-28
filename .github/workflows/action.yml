@@ -62,7 +62,7 @@ jobs:
           tags: ${{secrets.DOCKERHUB_REPOSITORY}}/meettify:latest
 
 
-      - name: SSH to EC2 and remove old docker-compose.yml
+      - name: SSH to EC2 and deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PUBLIC_IP }}
@@ -77,22 +77,14 @@ jobs:
             else
               echo "No old docker-compose.yml file found"
             fi
-
-      # ec2 연결
-      - name: SSH to EC2 and deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.PUBLIC_IP }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            cd /home/ubuntu  # docker-compose.yml 파일이 위치한 디렉토리로 이동
+        
+            # docker-compose 설치 확인
             if ! command -v docker-compose &> /dev/null; then
               echo "docker-compose is not installed. Installing..."
               sudo apt-get update
               sudo apt-get install -y docker-compose
             fi
+        
             # 기존 컨테이너 중지 및 제거
             docker-compose down
             docker-compose rm -f  # 강제로 컨테이너 제거
