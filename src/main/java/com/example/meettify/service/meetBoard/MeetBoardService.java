@@ -1,9 +1,8 @@
 package com.example.meettify.service.meetBoard;
 
-import com.example.meettify.dto.meetBoard.MeetBoardServiceDTO;
-import com.example.meettify.dto.meetBoard.ResponseMeetBoardDetailsDTO;
-import com.example.meettify.dto.meetBoard.ResponseMeetBoardDTO;
-import com.example.meettify.dto.meetBoard.UpdateMeetBoardServiceDTO;
+import com.example.meettify.dto.meetBoard.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface MeetBoardService {
 
@@ -14,4 +13,6 @@ public interface MeetBoardService {
     String deleteBoard(Long meetId, Long meetBoardId, String username) throws Exception;
 
     ResponseMeetBoardDTO updateBoardService(UpdateMeetBoardServiceDTO updateMeetBoardServiceDTO, String username) throws Exception;
+
+    Page<MeetBoardSummaryDTO> getPagedList(Long meetId, Pageable pageable);
 }
