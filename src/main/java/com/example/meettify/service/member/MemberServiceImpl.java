@@ -37,7 +37,6 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ModelMapper modelMapper;
     private final JwtProvider jwtProvider;
     private final TokenRepository tokenRepository;
 
