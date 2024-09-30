@@ -1,7 +1,6 @@
 package com.example.meettify.dto.meetBoard;
 
 
-import com.example.meettify.dto.meet.category.Category;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class MeetBoardDetailsResponseDTO {
+public class ResponseMeetBoardDetailsDTO {
     private Long meetBoardId;
     private Long  meetId;
     private String meetBoardTitle;

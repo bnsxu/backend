@@ -21,6 +21,7 @@ public class MeetBoardImageEntity extends BaseEntity {
     private Long meetBoardImagesId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @Setter
     @JoinColumn(name = "meetBoard_id")
     private MeetBoardEntity meetBoardEntity;
 

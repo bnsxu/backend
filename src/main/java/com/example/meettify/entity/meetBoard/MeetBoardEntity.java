@@ -49,4 +49,9 @@ public class MeetBoardEntity extends BaseEntity {
     public void prePersist() {
         this.postDate = (this.postDate == null) ? LocalDateTime.now() : this.postDate;
     }
+
+    public void addMeetBoardImage(MeetBoardImageEntity imageEntity) {
+        this.meetBoardImages.add(imageEntity);
+        imageEntity.setMeetBoardEntity(this);  // Bidirectional link
+    }
 }
