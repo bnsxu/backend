@@ -2,10 +2,7 @@ package com.example.meettify.service.meetBoard;
 
 import com.example.meettify.config.s3.S3ImageUploadService;
 import com.example.meettify.dto.meet.MeetRole;
-import com.example.meettify.dto.meetBoard.MeetBoardServiceDTO;
-import com.example.meettify.dto.meetBoard.ResponseMeetBoardDetailsDTO;
-import com.example.meettify.dto.meetBoard.ResponseMeetBoardDTO;
-import com.example.meettify.dto.meetBoard.UpdateMeetBoardServiceDTO;
+import com.example.meettify.dto.meetBoard.*;
 import com.example.meettify.entity.meet.MeetMemberEntity;
 import com.example.meettify.entity.meetBoard.MeetBoardEntity;
 import com.example.meettify.entity.meetBoard.MeetBoardImageEntity;
@@ -20,6 +17,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +37,15 @@ public class MeetBoardServiceImpl implements MeetBoardService {
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
     private final S3ImageUploadService s3ImageUploadService;  // S3 서비스 추가
+
+
+    public Page<MeetBoardSummaryDTO> getPagedList(Long meetId, Pageable pageable) {
+        // meetId에 맞는 게시글 리스트를 페이징 처리하여 가져옴
+        Page<MeetBoardEntity> meetBoardPage = meetBoardRepository.findByMeetIdWithMember(meetId, pageable);
+
+        // 엔티티를 DTO로 변환하여 반환
+        return meetBoardPage.map(MeetBoardSummaryDTO::changeDTO);
+    }
 
 
 

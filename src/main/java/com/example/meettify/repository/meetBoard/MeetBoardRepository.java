@@ -1,6 +1,7 @@
 package com.example.meettify.repository.meetBoard;
 
 import com.example.meettify.entity.meetBoard.MeetBoardEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,5 +20,9 @@ public interface MeetBoardRepository extends JpaRepository<MeetBoardEntity, Long
     //누가 작성했는지 까지 알아야한다.
     @Query("SELECT mb FROM meetBoards mb JOIN FETCH mb.memberEntity WHERE mb.meetEntity = :meetId ORDER BY mb.postDate DESC")
     List<MeetBoardEntity> findTop3MeetBoardEntitiesByMeetId(@Param("meetId") Long meetId, Pageable pageable);
+
+    @Query("SELECT mb FROM meetBoards mb JOIN FETCH mb.memberEntity m WHERE mb.meetEntity.meetId = :meetId")
+    Page<MeetBoardEntity> findByMeetIdWithMember(@Param("meetId") Long meetId, Pageable pageable);
+
 
 }
