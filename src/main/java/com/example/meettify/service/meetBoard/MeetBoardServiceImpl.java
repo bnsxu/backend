@@ -5,6 +5,7 @@ import com.example.meettify.dto.meet.MeetRole;
 import com.example.meettify.dto.meetBoard.MeetBoardServiceDTO;
 import com.example.meettify.dto.meetBoard.ResponseMeetBoardDetailsDTO;
 import com.example.meettify.dto.meetBoard.ResponseMeetBoardDTO;
+import com.example.meettify.dto.meetBoard.UpdateMeetBoardServiceDTO;
 import com.example.meettify.entity.meet.MeetMemberEntity;
 import com.example.meettify.entity.meetBoard.MeetBoardEntity;
 import com.example.meettify.entity.meetBoard.MeetBoardImageEntity;
@@ -124,6 +125,34 @@ public class MeetBoardServiceImpl implements MeetBoardService {
                 return "게시물을 삭제했습니다.";
             }
             return "게시물을 삭제할 권한이 없습니다.";
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseMeetBoardDTO updateBoardService(UpdateMeetBoardServiceDTO updateMeetBoardServiceDTO, String username) throws Exception {
+        try {
+            MeetBoardEntity meetBoardEntity = meetBoardRepository.findById(updateMeetBoardServiceDTO.getMeetBoardId()).orElseThrow(() -> new EntityNotFoundException("변경 대상 엔티티가 존재하지 않습니다."));
+            meetBoardEntity.updateMeet(updateMeetBoardServiceDTO);
+            meetBoardRepository.save(meetBoardEntity);
+            if (updateMeetBoardServiceDTO.getImages() != null && !updateMeetBoardServiceDTO.getImages().isEmpty()) {
+                List<MeetBoardImageEntity> imageEntities = s3ImageUploadService.upload(
+                        "meetImages",
+                        updateMeetBoardServiceDTO.getImages(),
+                        (oriFileName, uploadFileName, uploadFilePath, uploadFileUrl) -> MeetBoardImageEntity.builder()
+                                .meetBoardEntity(meetBoardEntity)
+                                .oriFileName(oriFileName)
+                                .uploadFileName(uploadFileName)
+                                .uploadFilePath(uploadFilePath)
+                                .uploadFileUrl(uploadFileUrl)
+                                .build()
+                );
+
+                // 기존 이미지 중에 updateMeetBoardServiceDTO에 전달 안 된건 삭제해달라는 거다. 확인하고 삭제하는 절차를 거치지자
+            }
+
+            return ResponseMeetBoardDTO.changeDTO(meetBoardEntity);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

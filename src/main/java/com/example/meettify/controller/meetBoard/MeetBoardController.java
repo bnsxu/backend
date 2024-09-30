@@ -1,9 +1,7 @@
 package com.example.meettify.controller.meetBoard;
 
-import com.example.meettify.dto.meetBoard.MeetBoardServiceDTO;
-import com.example.meettify.dto.meetBoard.ResponseMeetBoardDetailsDTO;
-import com.example.meettify.dto.meetBoard.RequestMeetBoardDTO;
-import com.example.meettify.dto.meetBoard.ResponseMeetBoardDTO;
+import com.amazonaws.Response;
+import com.example.meettify.dto.meetBoard.*;
 import com.example.meettify.service.meetBoard.MeetBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,17 +63,30 @@ public class MeetBoardController {
 
     @DeleteMapping("{meetId}/{meetBoardId}")
     @Tag(name = "meetBoard")
-    @Operation(summary = "모임 게시물 등록", description = "모임 게시글 등록하기")
-    public ResponseEntity<?> deleteBoard(@PathVariable Long meetId,
-                                            @PathVariable Long meetBoardId, @AuthenticationPrincipal UserDetails userDetails) {
-
+    @Operation(summary = "모임 게시물 삭제", description = "모임 게시글 삭제하기 ")
+    public ResponseEntity<?> deleteBoard(@PathVariable Long meetId, @PathVariable Long meetBoardId, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            String response = meetBoardService.deleteBoard(meetId,meetBoardId, userDetails.getUsername());
+            String response = meetBoardService.deleteBoard(meetId, meetBoardId, userDetails.getUsername());
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
-            log.error("예외 : " + e.getMessage());
+            log.error("모임 게시글 삭제 오류: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-
     }
+
+    @PatchMapping("{meetBoardId}")
+    @Tag(name = "meetBoard")
+    @Operation(summary = "모임 게시판 수정", description = "모임 게시글 수정하기 ")
+    public ResponseEntity<?> updateBoard(@PathVariable Long meetBoardId, UpdateRequestMeetBoardDTO requestMeetBoardDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+
+            UpdateMeetBoardServiceDTO updateMeetBoardServiceDTO = UpdateMeetBoardServiceDTO.makeServiceDTO(requestMeetBoardDTO);
+            ResponseMeetBoardDTO response = meetBoardService.updateBoardService(updateMeetBoardServiceDTO, userDetails.getUsername());
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            log.error("모임 게시글 수정 오류 " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }

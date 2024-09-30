@@ -2,6 +2,7 @@ package com.example.meettify.entity.meetBoard;
 
 import com.example.meettify.config.auditing.entity.BaseEntity;
 import com.example.meettify.dto.meetBoard.MeetBoardServiceDTO;
+import com.example.meettify.dto.meetBoard.UpdateMeetBoardServiceDTO;
 import com.example.meettify.entity.meet.MeetEntity;
 import com.example.meettify.entity.member.MemberEntity;
 import jakarta.persistence.*;
@@ -63,5 +64,12 @@ public class MeetBoardEntity extends BaseEntity {
                 .memberEntity(member)  // 작성자 정보 설정
                 .meetEntity(meetEntity)  // 모임 정보 설정
                 .build();
+    }
+
+    public void updateMeet(UpdateMeetBoardServiceDTO updateMeetBoardServiceDTO) {
+        // 변경 요구사항을 가지고 해당 메소드 실행
+        this.meetBoardTitle = updateMeetBoardServiceDTO.getMeetBoardTitle() == null ? this.getMeetBoardTitle() : updateMeetBoardServiceDTO.getMeetBoardTitle();
+        this.meetBoardContent = updateMeetBoardServiceDTO.getMeetBoardContent() == null ? this.getMeetBoardContent() : updateMeetBoardServiceDTO.getMeetBoardContent();
+
     }
 }
