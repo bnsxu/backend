@@ -1,6 +1,9 @@
 package com.example.meettify.controller.meetBoard;
 
-import com.example.meettify.dto.meetBoard.MeetBoardDetailsResponseDTO;
+import com.example.meettify.dto.meetBoard.MeetBoardServiceDTO;
+import com.example.meettify.dto.meetBoard.ResponseMeetBoardDetailsDTO;
+import com.example.meettify.dto.meetBoard.RequestMeetBoardDTO;
+import com.example.meettify.dto.meetBoard.ResponseMeetBoardDTO;
 import com.example.meettify.service.meetBoard.MeetBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,10 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Log4j2
@@ -27,17 +29,37 @@ public class MeetBoardController {
     @Tag(name = "meetBoard")
     @Operation(summary = "모임 게시물 Detail", description = "모임 게시물 상세 조회 ")
     public ResponseEntity<?> getDetail(@PathVariable Long meetBoardId, @AuthenticationPrincipal UserDetails userDetails) {
-        try{
+        try {
             String email = userDetails.getUsername();
             log.info("email : " + email);
-            MeetBoardDetailsResponseDTO meetBoardDetailsResponseDTO = meetBoardService.getDetails(meetBoardId);
+            ResponseMeetBoardDetailsDTO meetBoardDetailsResponseDTO = meetBoardService.getDetails(meetBoardId);
 
             return ResponseEntity.status(HttpStatus.OK).body(meetBoardDetailsResponseDTO);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("예외 : " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
+    //
+    @PostMapping("")
+    @Tag(name = "meetBoard")
+    @Operation(summary = "모임 게시물 등록", description = "모임 게시글 등록하기")
+    public ResponseEntity<?> postBoard(@Validated @RequestBody RequestMeetBoardDTO meetBoard, BindingResult bindingResult, @AuthenticationPrincipal UserDetails userDetails) {
 
+        try {
+
+            if (bindingResult.hasErrors()) {
+                log.error("binding error : {}", bindingResult.getAllErrors());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
+            }
+
+            MeetBoardServiceDTO meetBoardServiceDTO = MeetBoardServiceDTO.makeServiceDTO(meetBoard);
+            ResponseMeetBoardDTO response = meetBoardService.postBoard(meetBoardServiceDTO, userDetails.getUsername());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (Exception e) {
+            log.error("예외 : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

@@ -33,4 +33,7 @@ public class MeetImageEntity extends BaseEntity {
     @Column(name="meetImage_uploadFileUrl")
     String uploadFileUrl;
 
+
+
+
 }

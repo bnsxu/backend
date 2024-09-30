@@ -30,7 +30,7 @@ import java.util.List;
 @RestController
 @Log4j2
 @RequestMapping("/api/v1/meets")
-@Tag(name = "member", description = "유저 API")
+@Tag(name = "meet", description = "모임 API")
 @RequiredArgsConstructor
 public class MeetController {
     private final MeetService meetService;
