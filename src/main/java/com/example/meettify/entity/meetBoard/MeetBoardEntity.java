@@ -1,6 +1,7 @@
 package com.example.meettify.entity.meetBoard;
 
 import com.example.meettify.config.auditing.entity.BaseEntity;
+import com.example.meettify.dto.meetBoard.MeetBoardServiceDTO;
 import com.example.meettify.entity.meet.MeetEntity;
 import com.example.meettify.entity.member.MemberEntity;
 import jakarta.persistence.*;
@@ -31,7 +32,7 @@ public class MeetBoardEntity extends BaseEntity {
     @Column(name="meetBoard_content")
     private String meetBoardContent;
 
-    @OneToMany(mappedBy = "meetBoardEntity", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "meetBoardEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MeetBoardImageEntity> meetBoardImages;
 
     @JoinColumn(name = "member_id")
@@ -53,5 +54,14 @@ public class MeetBoardEntity extends BaseEntity {
     public void addMeetBoardImage(MeetBoardImageEntity imageEntity) {
         this.meetBoardImages.add(imageEntity);
         imageEntity.setMeetBoardEntity(this);  // Bidirectional link
+    }
+
+    public static MeetBoardEntity postMeetBoard(MeetBoardServiceDTO meetBoardServiceDTO, MemberEntity member, MeetEntity meetEntity){
+        return MeetBoardEntity.builder()
+                .meetBoardTitle(meetBoardServiceDTO.getMeetBoardTitle())
+                .meetBoardContent(meetBoardServiceDTO.getMeetBoardContent())
+                .memberEntity(member)  // 작성자 정보 설정
+                .meetEntity(meetEntity)  // 모임 정보 설정
+                .build();
     }
 }

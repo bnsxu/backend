@@ -9,4 +9,6 @@ public interface MeetBoardService {
     ResponseMeetBoardDetailsDTO getDetails(Long meetBoardId);
 
     ResponseMeetBoardDTO postBoard(MeetBoardServiceDTO meetBoardServiceDTO, String email) throws Exception;
+
+    String deleteBoard(Long meetId, Long meetBoardId, String username) throws Exception;
 }

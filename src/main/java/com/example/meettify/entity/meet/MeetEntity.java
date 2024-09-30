@@ -4,6 +4,7 @@ package com.example.meettify.entity.meet;
 import com.example.meettify.config.auditing.entity.BaseEntity;
 import com.example.meettify.dto.meet.UpdateMeetServiceDTO;
 import com.example.meettify.dto.meet.category.Category;
+import com.example.meettify.entity.meetBoard.MeetBoardEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,8 +45,8 @@ public class MeetEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Category meetCategory;
 
-    @OneToMany(mappedBy = "meetEntity", fetch = FetchType.LAZY)
-    private List<com.example.meettify.entity.meetBoard.MeetBoardEntity> MeetBoardEntity;
+    @OneToMany(mappedBy = "meetEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MeetBoardEntity> MeetBoardEntity;
 
 
     public void updateMeet(UpdateMeetServiceDTO updateMeetDTO) {
