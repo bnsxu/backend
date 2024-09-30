@@ -62,4 +62,20 @@ public class MeetBoardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @DeleteMapping("{meetId}/{meetBoardId}")
+    @Tag(name = "meetBoard")
+    @Operation(summary = "모임 게시물 등록", description = "모임 게시글 등록하기")
+    public ResponseEntity<?> deleteBoard(@PathVariable Long meetId,
+                                            @PathVariable Long meetBoardId, @AuthenticationPrincipal UserDetails userDetails) {
+
+        try {
+            String response = meetBoardService.deleteBoard(meetId,meetBoardId, userDetails.getUsername());
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            log.error("예외 : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+    }
 }
