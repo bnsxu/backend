@@ -2,7 +2,16 @@
 FROM gradle:8.0.2-jdk17 AS builder
 WORKDIR /app
 
-# 소스 코드를 복사
+# Gradle Wrapper 및 설정 파일 복사
+# gradlew 파일 복사
+COPY gradlew .
+# gradle 폴더 복사
+COPY gradle gradle
+# build.gradle 복사
+COPY build.gradle .
+# settings.gradle 복사
+COPY settings.gradle .
+# 소스 코드 복사
 COPY src src
 
 # Gradle 빌드 수행
