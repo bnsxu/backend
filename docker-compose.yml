@@ -45,7 +45,7 @@ services:
 
   api:
     build:
-      context: /home/ubuntu
+      context: ./docker/api/.
       dockerfile: Dockerfile  # Dockerfile 경로
     image: zxzz8014/meettify:latest
     env_file:

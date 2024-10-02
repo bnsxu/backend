@@ -2,9 +2,17 @@
 FROM gradle:8.0.2-jdk17 AS builder
 WORKDIR /app
 
+# Gradle Wrapper를 복사하고 실행 권한 부여
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+
+# 소스 코드를 복사
+COPY src src
 
 # Gradle 빌드 수행
-RUN chmod +x gradlew && ./gradlew build --no-daemon --parallel
+RUN chmod +x gradlew && ./gradlew build --no-daemon
 
 # Base image for running the application
 FROM openjdk:17-jdk-slim
