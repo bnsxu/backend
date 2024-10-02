@@ -46,3 +46,7 @@ src/main/resources/application-local.yml
 .env
 
 src/main/resources/index.html
+DS_Store
+gitignore
+src/.DS_Store
+src/main/.DS_Store
