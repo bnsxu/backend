@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Getter
 public class ResponseItemDTO {
     private Long itemId;
-    private Long itemName;
+    private String itemName;
     private int itemPrice;
     private String itemDetails;
     private ItemStatus itemStatus;

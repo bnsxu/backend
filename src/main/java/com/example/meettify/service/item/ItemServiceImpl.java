@@ -1,10 +1,10 @@
 package com.example.meettify.service.item;
 
-import com.example.meettify.config.s3.FileDTOFactory;
 import com.example.meettify.config.s3.S3ImageUploadService;
 import com.example.meettify.dto.item.CreateItemServiceDTO;
 import com.example.meettify.dto.item.ResponseItemDTO;
 import com.example.meettify.dto.item.ResponseItemImgDTO;
+import com.example.meettify.dto.item.UpdateItemServiceDTO;
 import com.example.meettify.entity.item.ItemEntity;
 import com.example.meettify.entity.item.ItemImgEntity;
 import com.example.meettify.entity.member.MemberEntity;
@@ -21,6 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 @Transactional
 @RequiredArgsConstructor
@@ -60,5 +63,30 @@ public class ItemServiceImpl implements ItemService {
                         .uploadImgUrl(uploadFileUrl)
                         .build()
         );
+    }
+
+    @Override
+    public ResponseItemDTO updateItem(Long itemId,
+                                      UpdateItemServiceDTO updateItemDTO,
+                                      List<MultipartFile> files,
+                                      String memberEmail,
+                                      String role) {
+        try {
+            ItemEntity findItem = itemRepository.findById(itemId)
+                    .orElse(null);
+            List<ItemImgEntity> findItemImg = itemImgRepository.findByItem_ItemId(itemId);
+
+            if(updateItemDTO.getRemainImgId().isEmpty()) {
+                requireNonNull(findItem).getImages().clear();
+            } else {
+                requireNonNull(findItem).remainImgId(updateItemDTO.getRemainImgId());
+            }
+
+            findItem.updateItem(updateItemDTO, findItemImg);
+            ItemEntity saveItem = itemRepository.save(findItem);
+            return ResponseItemDTO.changeDTO(saveItem);
+        } catch (Exception e) {
+            throw new ItemException(e.getMessage());
+        }
     }
 }

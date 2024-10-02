@@ -1,8 +1,6 @@
 package com.example.meettify.controller.item;
 
-import com.example.meettify.dto.item.CreateItemDTO;
-import com.example.meettify.dto.item.CreateItemServiceDTO;
-import com.example.meettify.dto.item.ResponseItemDTO;
+import com.example.meettify.dto.item.*;
 import com.example.meettify.service.item.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -44,6 +42,23 @@ public class ItemController implements ItemControllerDocs{
 
             String email = userDetails.getUsername();
             ResponseItemDTO response = itemService.createItem(changeServiceDTO, files, email);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateItem(Long itemId, UpdateItemDTO item, List<MultipartFile> files, UserDetails userDetails) {
+        try {
+            String email = userDetails.getUsername();
+            String authority = userDetails.getAuthorities()
+                    .iterator()
+                    .next()
+                    .getAuthority();
+            UpdateItemServiceDTO changeServiceDTO = modelMapper.map(item, UpdateItemServiceDTO.class);
+            log.info("changeServiceDTO : " + changeServiceDTO);
+            ResponseItemDTO response = itemService.updateItem(itemId, changeServiceDTO, files, email, authority);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

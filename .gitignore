@@ -46,7 +46,8 @@ src/main/resources/application-local.yml
 .env
 
 src/main/resources/index.html
-DS_Store
+.DS_Store
+**/.DS_Store
 src/.DS_Store
 src/main/.DS_Store
 src/main/java/.DS_Store
