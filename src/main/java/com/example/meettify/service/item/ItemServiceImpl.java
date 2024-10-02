@@ -15,20 +15,22 @@ import com.example.meettify.repository.item.ItemRepository;
 import com.example.meettify.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Transactional
 @RequiredArgsConstructor
 @Log4j2
-public class ItemServiceImpl implements ItemService{
+@Service
+public class ItemServiceImpl implements ItemService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final ItemImgRepository itemImgRepository;
     private final S3ImageUploadService s3ImageUploadService;
-    private final FileDTOFactory<ResponseItemImgDTO> fileDTOFactory; // 파일 DTO 생성 팩토리
 
 
     @Override
@@ -36,7 +38,7 @@ public class ItemServiceImpl implements ItemService{
         try {
             MemberEntity findMember = memberRepository.findByMemberEmail(memberEmail);
             if (findMember != null) {
-                List<ResponseItemImgDTO> itemImages = s3ImageUploadService.upload("product", files, fileDTOFactory);
+                List<ResponseItemImgDTO> itemImages = uploadItemImages(files);
                 ItemEntity itemEntity = ItemEntity.createEntity(item);
                 ItemImgEntity imgEntity = ItemImgEntity.createEntity(itemImages, itemEntity);
                 itemEntity.addImage(imgEntity);
@@ -47,5 +49,16 @@ public class ItemServiceImpl implements ItemService{
         } catch (Exception e) {
             throw new ItemException("상품 생성 실패 : " + e.getMessage());
         }
+    }
+
+    private List<ResponseItemImgDTO> uploadItemImages(List<MultipartFile> files) throws IOException {
+        return s3ImageUploadService.upload("product", files, (oriFileName, uploadFileName, uploadFilePath, uploadFileUrl) ->
+                ResponseItemImgDTO.builder()
+                        .originalImgName(oriFileName)
+                        .uploadImgName(uploadFileName)
+                        .uploadImgPath(uploadFilePath)
+                        .uploadImgUrl(uploadFileUrl)
+                        .build()
+        );
     }
 }
