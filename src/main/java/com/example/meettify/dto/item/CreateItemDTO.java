@@ -20,7 +20,7 @@ import lombok.*;
 public class CreateItemDTO {
     @Schema(description = "상품 이름")
     @NotNull(message = "상품 이름은 필수입니다.")
-    private Long itemName;
+    private String itemName;
 
     @Schema(description = "상품 가격")
     @NotNull(message = "상품 가격은 필수입니다.")

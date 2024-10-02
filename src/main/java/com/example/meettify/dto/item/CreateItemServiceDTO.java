@@ -19,7 +19,7 @@ import lombok.*;
 @Builder
 public class CreateItemServiceDTO {
     @NotNull(message = "상품 이름은 필수입니다.")
-    private Long itemName;
+    private String itemName;
 
     @NotNull(message = "상품 가격은 필수입니다.")
     @Min(value = 0, message = "상품 가격은 최소 0원 이상이여야 합니다.")
