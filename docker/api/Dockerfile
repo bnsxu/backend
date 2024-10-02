@@ -17,6 +17,7 @@ FROM openjdk:17-jdk-slim
 # JAR 파일 경로 설정
 ARG JAR_FILE=build/libs/meettify-0.0.1-SNAPSHOT.jar
 
+# host
 EXPOSE 8080
 
 # 빌드된 JAR 파일을 컨테이너로 복사
