@@ -62,7 +62,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: docker/api/Dockerfile
+          file: Dockerfile
           push: true
           tags: ${{secrets.DOCKERHUB_REPOSITORY}}/meettify:latest
 
