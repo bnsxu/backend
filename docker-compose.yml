@@ -46,7 +46,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile  # Dockerfile 경로
+      dockerfile: docker/api/Dockerfile  # Dockerfile 경로
     image: zxzz8014/meettify:latest
     env_file:
       - .env  # 환경 변수를 포함하는 파일
