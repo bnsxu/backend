@@ -29,6 +29,7 @@ public class ResponseItemDTO {
     private int itemPrice;
     private String itemDetails;
     private ItemStatus itemStatus;
+    @Builder.Default
     private List<ResponseItemImgDTO> images = new ArrayList<>();
     // 재고 수량
     private int itemCount;
