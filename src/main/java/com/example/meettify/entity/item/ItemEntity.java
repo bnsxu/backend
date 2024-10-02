@@ -45,6 +45,7 @@ public class ItemEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("itemImgId asc ")
+    @Builder.Default
     private List<ItemImgEntity> images = new ArrayList<>();
 
     // 재고 수량

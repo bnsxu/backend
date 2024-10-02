@@ -2,10 +2,13 @@
 FROM gradle:8.0.2-jdk17 AS builder
 WORKDIR /app
 
+# Gradle Wrapper를 복사하고 실행 권한 부여
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
+
+# 소스 코드를 복사
 COPY src src
 
 # Gradle 빌드 수행
@@ -17,7 +20,6 @@ FROM openjdk:17-jdk-slim
 # JAR 파일 경로 설정
 ARG JAR_FILE=build/libs/meettify-0.0.1-SNAPSHOT.jar
 
-# host
 EXPOSE 8080
 
 # 빌드된 JAR 파일을 컨테이너로 복사
