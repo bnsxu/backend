@@ -1,32 +1,17 @@
-# Base image for building the application
+# Build stage
 FROM gradle:8.0.2-jdk17 AS builder
 WORKDIR /app
 
-# Gradle Wrapper 및 설정 파일 복사
-# gradlew 파일 복사
-COPY gradlew .
-# gradle 폴더 복사
-COPY gradle gradle
-# build.gradle 복사
-COPY build.gradle .
-# settings.gradle 복사
-COPY settings.gradle .
-# 소스 코드 복사
-COPY src src
+# 소스 코드 및 Gradle 설정 파일 복사
+COPY . .
 
 # Gradle 빌드 수행
-RUN chmod +x gradlew && ./gradlew build --no-daemon
+RUN ./gradlew clean build --no-daemon
 
-# Base image for running the application
-FROM openjdk:17-jdk-slim
-
-# JAR 파일 경로 설정
-ARG JAR_FILE=build/libs/meettify-0.0.1-SNAPSHOT.jar
+# Run stage
+FROM openjdk:17
+ARG JAR_FILE_PATH=build/libs/*.jar
+COPY --from=builder ${JAR_FILE_PATH} app.jar
 
 EXPOSE 8080
-
-# 빌드된 JAR 파일을 컨테이너로 복사
-COPY --from=builder /app/${JAR_FILE} app.jar
-
-# 컨테이너 시작 시 실행할 명령어 지정
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "app.jar"]
