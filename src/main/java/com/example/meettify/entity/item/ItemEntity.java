@@ -3,7 +3,10 @@ package com.example.meettify.entity.item;
 import com.example.meettify.config.auditing.entity.BaseEntity;
 import com.example.meettify.dto.item.CreateItemServiceDTO;
 import com.example.meettify.dto.item.status.ItemStatus;
+import com.example.meettify.dto.meet.category.Category;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -45,6 +48,9 @@ public class ItemEntity extends BaseEntity {
     @Column(name = "item_count")
     private int itemCount;
 
+    @Column(name = "item_category")
+    private Category itemCategory;
+
     // 상품 엔티티 생성
     public static ItemEntity createEntity(CreateItemServiceDTO item) {
         return ItemEntity.builder()
@@ -53,6 +59,7 @@ public class ItemEntity extends BaseEntity {
                 .itemDetails(item.getItemDetails())
                 .itemStatus(item.getItemStatus())
                 .itemCount(item.getItemCount())
+                .itemCategory(item.getItemCategory())
                 .build();
     }
 

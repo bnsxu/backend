@@ -1,6 +1,8 @@
 package com.example.meettify.dto.item;
 
 import com.example.meettify.dto.item.status.ItemStatus;
+import com.example.meettify.dto.meet.category.Category;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -32,4 +34,7 @@ public class CreateItemServiceDTO {
     @NotNull(message = "상품 개수는 필수입니다.")
     @Min(value = 1, message = "상품 개수는 최소 1개 이상이여야 합니다.")
     private int itemCount;
+
+    @NotNull(message = "상품 카테고리는 필수입니다.")
+    private Category itemCategory;
 }
