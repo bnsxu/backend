@@ -14,6 +14,9 @@ COPY src src
 # Gradle 빌드 수행
 RUN chmod +x gradlew && ./gradlew build --no-daemon
 
+# JAR 파일 위치 확인 (Optional)
+RUN ls /app/build/libs/
+
 # Base image for running the application
 FROM openjdk:17-jdk-slim
 
