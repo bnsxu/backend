@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /*
@@ -76,10 +77,27 @@ public class MeetController {
                     .meetId(meetId)
                     .build());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 모임 조회입니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MeetRole.EXPEL);
         }
     }
 
+
+    //모임 권한 정보 가져오기
+    @GetMapping("/{meetId}/role")
+    @Tag(name = "meet")
+    @Operation(summary = "모임 내에서 접속 유저의 권한", description = "모임 내의 권한 정보 전달하기 ")
+    public ResponseEntity<?> getMeetRole(@PathVariable Long meetId, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            if (Objects.isNull(userDetails) ||"".equals(userDetails.getUsername())|| userDetails.getUsername() == null ) {
+                ResponseEntity.status(HttpStatus.OK).body(MeetRole.EXPEL);
+            }
+
+            MeetRole response = meetService.getMeetRole(meetId, userDetails.getUsername());
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 모임 권한 조회입니다.");
+        }
+    }
 
 
     @PostMapping("")
@@ -89,6 +107,7 @@ public class MeetController {
     public ResponseEntity<?> makeMeet(@Valid @RequestBody RequestMeetDTO meet, BindingResult bindingResult, @AuthenticationPrincipal UserDetails userDetails) {
 
         try {
+
             // 입력값 검증 예외가 발생하면 예외 메세지를 출력
             if (bindingResult.hasErrors()) {
                 log.error("binding error: {}", bindingResult.getAllErrors());
