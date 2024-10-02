@@ -1,5 +1,5 @@
 name: CI/CD Pipeline
-# main으로 이동하면 동작
+
 on:
   push:
     branches:
@@ -62,7 +62,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: Dockerfile
+          file: docker/api/Dockerfile
           push: true
           tags: ${{secrets.DOCKERHUB_REPOSITORY}}/meettify:latest
 
@@ -106,5 +106,6 @@ jobs:
             docker-compose rm -f
 
             # 최신 이미지 가져와서 컨테이너 실행
+            docker-compose build
             docker-compose pull
-            docker-compose up -d --build
+            docker-compose up -d
