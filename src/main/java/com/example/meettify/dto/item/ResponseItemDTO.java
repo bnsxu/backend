@@ -1,8 +1,11 @@
 package com.example.meettify.dto.item;
 
 import com.example.meettify.dto.item.status.ItemStatus;
+import com.example.meettify.dto.meet.category.Category;
 import com.example.meettify.entity.item.ItemEntity;
 import com.example.meettify.entity.item.ItemImgEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ public class ResponseItemDTO {
     private List<ResponseItemImgDTO> images = new ArrayList<>();
     // 재고 수량
     private int itemCount;
+    private Category itemCategory;
 
     // 엔티티 -> DTO
     public static ResponseItemDTO changeDTO(ItemEntity item) {
@@ -47,6 +51,7 @@ public class ResponseItemDTO {
                 .itemDetails(item.getItemDetails())
                 .itemStatus(item.getItemStatus())
                 .images(imagesDTO)
+                .itemCategory(item.getItemCategory())
                 .itemCount(item.getItemCount())
                 .build();
     }
