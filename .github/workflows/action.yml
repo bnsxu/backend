@@ -1,5 +1,5 @@
 name: CI/CD Pipeline
-
+# main으로 이동하면 동작
 on:
   push:
     branches:
